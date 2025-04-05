@@ -129,16 +129,18 @@ class NovaAct:
         user_data_dir: str, optional
             Path to Chrome data storage (cookies, cache, etc.).
             If not specified, will use a temp dir.
-            Note that if multiple NovaAct instances are used in the same process (e.g., via a ThreadPool), each
-            one must have its own user_data_dir. In practice, this means either not specifying user_data_dir
-            (so a fresh temp dir is used for each instance) or using clone_user_data_dir=True.
+            Note that if multiple NovaAct instances are used in the same process (e.g., via a 
+            ThreadPool), each one must have its own user_data_dir. In practice, this means either 
+            not specifying user_data_dir (so a fresh temp dir is used for each instance) or using 
+            clone_user_data_dir=True.
         clone_user_data_dir: bool
-            If True (default), will make a copy of user_data_dir into a temp dir for each instance of NovaAct.
-            This ensures the original is not modified and that each instance has its own user_data_dir.
+            If True (default), will make a copy of user_data_dir into a temp dir for each instance 
+            of NovaAct. This ensures the original is not modified and that each instance has its 
+            own user_data_dir.
             If user_data_dir is not specified, this flag has no effect.
         profile_directory: str
-            Directory for the Chrome user profile within user_data_dir. Only needed if using an existing 
-            Chrome profile.
+            Directory for the Chrome user profile within user_data_dir. Only needed if using an 
+            existing Chrome profile.
         extension_path : str, optional
             Path to the compiled Chrome extension for browser actuation
         screen_width: int
@@ -146,11 +148,11 @@ class NovaAct:
         screen_height: int
             Height of the screen for the playwright instance. Within range [864, 1296].
         headless: bool
-            Whether to launch the Playwright browser in headless mode. Defaults to False. 
+            Whether to launch the Playwright browser in headless mode. Defaults to False.
             Can also be enabled with the `NOVA_ACT_HEADLESS` environment variable.
         chrome_channel: str, optional
-            Browser channel to use (e.g., "chromium", "chrome-beta", "msedge" etc.). Defaults to 
-            "chrome". Can also be specified via `NOVA_ACT_CHROME_CHANNEL` environment variable.
+            Browser channel to use (e.g., "chromium", "chrome-beta", "msedge" etc.). Defaults to
+            "chrome". Can also be specified via the `NOVA_ACT_CHROME_CHANNEL` environment variable.
         nova_act_api_key: str
             API key for interacting with NovaAct. Will override the NOVA_ACT_API_KEY 
             environment variable
@@ -323,7 +325,7 @@ class NovaAct:
     def pages(self) -> list[Page]:
         """Get the current playwright pages.
 
-        Note: the order of these pages might not reflect their tab order in the window if they have
+        Note: the order of these pages might not reflect their tab order in the window if they have 
         been moved
         """
         if not self.started:
@@ -409,9 +411,9 @@ class NovaAct:
         timeout: int, optional
             The timeout (in seconds) for the task to actuate.
         max_steps: int
-            Configure the maximum number of steps (browser actuations) `act()` will take before giving 
-            up on the task.
-            Use this to make sure the agent doesn't get stuck forever trying different paths. 
+            Configure the maximum number of steps (browser actuations) `act()` will take before 
+            giving up on the task. Use this to make sure the agent doesn't get stuck forever 
+            trying different paths.
             Default is 30.
         schema: Dict[str, Any] | None
             An optional jsonschema, which the output should to adhere to
