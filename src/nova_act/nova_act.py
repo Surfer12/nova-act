@@ -275,8 +275,8 @@ class NovaAct:
         )
 
         self._dispatcher: ExtensionDispatcher | None = None
-        self._bridge = NovaActBridge(bridge_host, bridge_port) if enable_bridge else None
-        self._bridge_task = None
+        self._bridge: NovaActBridge | None = NovaActBridge(bridge_host, bridge_port) if enable_bridge else None
+        self._bridge_task: asyncio.Task | None = None
 
     def __del__(self) -> None:
         if hasattr(self, "_session_user_data_dir_is_temp") and self._session_user_data_dir_is_temp:
@@ -452,7 +452,7 @@ class NovaAct:
 
         # Broadcast thought update if bridge is enabled
         if self._bridge and response.success:
-            thought_data = {
+            thought_data: Dict[str, Any] = {
                 "prompt": prompt,
                 "result": response.result,
                 "metadata": response.metadata,

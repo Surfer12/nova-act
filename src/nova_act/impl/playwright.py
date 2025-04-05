@@ -110,12 +110,12 @@ class PlaywrightInstanceManager:
         return self._encrypter
 
     @property
-    def window_message_handler(self):
+    def window_message_handler(self) -> WindowMessageHandler:
         """Get the window message handler."""
         return self._window_message_handler
 
     @property
-    def started(self):
+    def started(self) -> bool:
         """Check if the client is started."""
         return self._context is not None
 
@@ -292,11 +292,12 @@ class PlaywrightInstanceManager:
         self._context = None
 
     @property
-    def main_page(self):
-        """Get an open page on which to send messages"""
-        if self._context is None:
-            raise ClientNotStarted("Playwright not attached, run start() to start")
-
+    def main_page(self) -> Page:
+        """Get the main page."""
+        if not self.started:
+            raise ClientNotStarted("Run start() to start the client before accessing the main page.")
+        if self._page is None:
+            raise PageNotFoundError("No page found in the browser context.")
         return self._page
 
     def get_page(self, index: int) -> Page:

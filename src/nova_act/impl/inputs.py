@@ -52,7 +52,19 @@ SUPPORTED_CHANNELS = {
 }
 
 
-def _get_key_length_by_backend(backend):
+def _get_key_length_by_backend(backend: Backend) -> int:
+    """Get the key length for a given backend.
+
+    Parameters
+    ----------
+    backend: Backend
+        The backend to get the key length for.
+
+    Returns
+    -------
+    int
+        The key length for the given backend.
+    """
     return 36
 
 
