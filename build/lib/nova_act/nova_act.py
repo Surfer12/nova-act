@@ -15,15 +15,11 @@ from __future__ import annotations
 
 import os
 import shutil
-import sys
 import tempfile
 import uuid
 from typing import Any, Dict, Type, cast
 
 from playwright.sync_api import Page, Playwright
-
-# Add the parent directory to sys.path to make nova_act a proper package
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from nova_act.impl.backend import Backend, get_urls_for_backend
 from nova_act.impl.common import get_default_extension_path, get_extension_version
@@ -333,7 +329,6 @@ class NovaAct:
             self._dispatcher.cancel_prompt()
             self._playwright.stop()
             self._dispatcher = None
-            self._playwright._session_id = None 
             _TRACE_LOGGER.info("\nend session\n")
             set_logging_session(None)
         except Exception as e:
