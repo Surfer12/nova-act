@@ -10,7 +10,6 @@ requests
 retry
 pytz
 numpy>=1.26.4,<2
-max>=25.3.0.dev2025040405,<26
 pytest>=8.0.0
 ruff>=0.0.292
 mypy>=1.5.1
