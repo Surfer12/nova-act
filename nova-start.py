@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 
@@ -8,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def main() -> None:
+async def main() -> None:
     """Test basic Nova Act functionality."""
     logger.info("Testing basic Nova Act functionality...")
 
@@ -26,12 +27,12 @@ def main() -> None:
 
         # Start the client
         logger.debug("Starting Nova Act client...")
-        nova.start()
+        await nova.start()
         logger.info("Nova Act started successfully!")
 
         # Try a simple search
         logger.info("\nPerforming a simple search...")
-        nova.act("search for Nova Act Amazon")
+        await nova.act("search for Nova Act Amazon")
         logger.info("Search completed!")
 
         # Keep the browser open for a while
@@ -45,9 +46,9 @@ def main() -> None:
         # Make sure to stop the client
         if "nova" in locals():
             logger.debug("Stopping Nova Act client...")
-            nova.stop()
+            await nova.stop()
             logger.info("Nova Act stopped.")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

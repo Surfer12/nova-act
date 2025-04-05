@@ -28,13 +28,13 @@ import fire  # type: ignore
 from nova_act import NovaAct
 
 
-def main(user_data_dir: str, order: str = "Shroomami", headless: bool = False):
+async def main(user_data_dir: str, order: str = "Shroomami", headless: bool = False):
     with NovaAct(
         starting_page="https://order.sweetgreen.com",
         user_data_dir=user_data_dir,
         headless=headless,
     ) as nova:
-        nova.act(
+        await nova.act(
             "If there is a cookie banner, close it. "
             "Click Menu at the top of the page. "
             "Click Delivery on the sidebar. "
@@ -49,4 +49,5 @@ def main(user_data_dir: str, order: str = "Shroomami", headless: bool = False):
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    import asyncio
+    fire.Fire(lambda **kwargs: asyncio.run(main(**kwargs)))

@@ -75,5 +75,21 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
-exclude = ["build/"]  # Only exclude build directory
-files = ["src"]  # Check files in the src directory
+exclude = ["build/", "nova_act/"]  # Exclude build and root nova_act directories
+mypy_path = "src"
+namespace_packages = true
+explicit_package_bases = true
+ignore_missing_imports = true
+
+[pypi-dependencies]
+build = "*"
+pytest = "*"
+ruff = "*"
+mypy = "*"
+mkdocs = "*"
+mkdocs-material = "*"
+websockets = ">=12.0"
+aiohttp = "*"
+fastapi = "*"
+types-retry = "*"
+types-jsonschema = "*"

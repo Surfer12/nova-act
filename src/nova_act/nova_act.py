@@ -275,7 +275,9 @@ class NovaAct:
         )
 
         self._dispatcher: ExtensionDispatcher | None = None
-        self._bridge: NovaActBridge | None = NovaActBridge(bridge_host, bridge_port) if enable_bridge else None
+        self._bridge: NovaActBridge | None = (
+            NovaActBridge(bridge_host, bridge_port) if enable_bridge else None
+        )
         self._bridge_task: asyncio.Task | None = None
 
     def __del__(self) -> None:

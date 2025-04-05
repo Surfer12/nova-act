@@ -61,7 +61,12 @@ class KeyboardEventWatcher:
 
         return self
 
-    def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: BaseException | None) -> bool:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: BaseException | None,
+    ) -> bool:
         """Clean up the watcher thread and reset terminal when exiting the context."""
         if self.terminal_manager:
             self.terminal_manager.__exit__(exc_type, exc_val, exc_tb)
