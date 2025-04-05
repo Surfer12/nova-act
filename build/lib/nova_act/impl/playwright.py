@@ -73,9 +73,7 @@ class PlaywrightInstanceManager:
         record_video: bool,
     ):
         self._playwright = maybe_playwright
-        self._owns_playwright = (
-            maybe_playwright is None
-        )  # Tracks if we created an instance
+        self._owns_playwright = maybe_playwright is None  # Tracks if we created an instance
         self._starting_page = starting_page
         self._chrome_channel = chrome_channel
         self._headless = headless
@@ -99,9 +97,7 @@ class PlaywrightInstanceManager:
                     "Cannot specify a profile directory when connecting over CDP"
                 )
             if self.user_agent:
-                raise ValidationFailed(
-                    "Cannot specify a user agent when connecting over CDP"
-                )
+                raise ValidationFailed("Cannot specify a user agent when connecting over CDP")
 
         self._context: BrowserContext | None = None
         self._page: Page | None = None
@@ -114,21 +110,20 @@ class PlaywrightInstanceManager:
         return self._encrypter
 
     @property
-    def window_message_handler(self):
+    def window_message_handler(self) -> WindowMessageHandler:
         """Get the window message handler."""
         return self._window_message_handler
 
     @property
-    def started(self):
+    def started(self) -> bool:
         """Check if the client is started."""
         return self._context is not None
 
-    def _init_browser_context(
-        self, context: BrowserContext, trusted_page: Page
-    ) -> Page:
+    def _init_browser_context(self, context: BrowserContext, trusted_page: Page) -> Page:
         # The protocol here is as follows:
         #
-        # - Navigate a trusted page. Trusted here means it won't tamper with the content script.
+        # - Navigate a trusted page. Trusted here means it won't tamper with the content
+        #   script.
         # - Wait for the page to register listeners.
         # - Send the encryption key through that page to the extension service worker.
         # - Service worker will then register the tab id with the SDK.
@@ -142,19 +137,14 @@ class PlaywrightInstanceManager:
         # Send in the secret key through a trusted page.
         trusted_page.goto("https://nova.amazon.com/agent-loading")
         self._initialize_page(trusted_page)
-        trusted_page.wait_for_selector(
-            "#autonomy-listeners-registered", state="attached"
-        )
-        trusted_page.evaluate(
-            POST_MESSAGE_EXPRESSION, self._encrypter.make_set_key_message()
-        )
+        trusted_page.wait_for_selector("#autonomy-listeners-registered", state="attached")
+        trusted_page.evaluate(POST_MESSAGE_EXPRESSION, self._encrypter.make_set_key_message())
 
-        # The default opened page may contain infobars with messages while new pages should not.
+        # The default opened page may contain infobars with messages while new pages should
+        # not.
         first_page = context.new_page()
         first_video_path = None
-        if (
-            self._record_video
-        ):  # We will delete this video since we're closing this page
+        if self._record_video:  # We will delete this video since we're closing this page
             first_video_path = cast(Video, trusted_page.video).path()
         trusted_page.close()
 
@@ -173,9 +163,7 @@ class PlaywrightInstanceManager:
     def start(self) -> None:
         """Start and attach the Browser"""
         if self._context is not None:
-            _LOGGER.warning(
-                "Playwright already attached, to start over, stop the client"
-            )
+            _LOGGER.warning("Playwright already attached, to start over, stop the client")
             return
 
         try:
@@ -196,9 +184,7 @@ class PlaywrightInstanceManager:
 
             # Attach to a context or create one.
             if self._cdp_endpoint_url is not None:
-                browser = self._playwright.chromium.connect_over_cdp(
-                    self._cdp_endpoint_url
-                )
+                browser = self._playwright.chromium.connect_over_cdp(self._cdp_endpoint_url)
 
                 if not browser.contexts:
                     raise InvalidPlaywrightState("No contexts found in the browser")
@@ -215,7 +201,8 @@ class PlaywrightInstanceManager:
                     f"--disable-extensions-except={self._extension_path}",
                     f"--load-extension={self._extension_path}",
                     f"--window-size={self.screen_width},{self.screen_height}",
-                    "--disable-blink-features=AutomationControlled",  # Suppress navigator.webdriver flag
+                    # Suppress navigator.webdriver flag
+                    "--disable-blink-features=AutomationControlled",
                     *(["--headless=new"] if self._headless else []),
                     *(
                         []
@@ -247,17 +234,11 @@ class PlaywrightInstanceManager:
                     original_user_agent = page.evaluate("() => navigator.userAgent")
                     browser.close()
                     # Replace the headless chrome bit since it's a detection artifact.
-                    original_user_agent = original_user_agent.replace(
-                        "HeadlessChrome/", "Chrome/"
-                    )
-                    context_options["user_agent"] = (
-                        original_user_agent + _DEFAULT_USER_AGENT_SUFFIX
-                    )
+                    original_user_agent = original_user_agent.replace("HeadlessChrome/", "Chrome/")
+                    context_options["user_agent"] = original_user_agent + _DEFAULT_USER_AGENT_SUFFIX
 
                 if self._record_video:
-                    context_options["record_video_dir"] = os.path.join(
-                        self._logs_directory
-                    )
+                    context_options["record_video_dir"] = os.path.join(self._logs_directory)
                     context_options["record_video_size"] = {
                         "width": self.screen_width,
                         "height": self.screen_height,
@@ -277,9 +258,7 @@ class PlaywrightInstanceManager:
             raise
         except Exception as e:
             self.stop()
-            raise StartFailed(
-                "Failed to start and initialize Playwright for NovaAct"
-            ) from e
+            raise StartFailed("Failed to start and initialize Playwright for NovaAct") from e
 
     def stop(self) -> None:
         """Stop and detach the Browser"""
@@ -313,11 +292,14 @@ class PlaywrightInstanceManager:
         self._context = None
 
     @property
-    def main_page(self):
-        """Get an open page on which to send messages"""
-        if self._context is None:
-            raise ClientNotStarted("Playwright not attached, run start() to start")
-
+    def main_page(self) -> Page:
+        """Get the main page."""
+        if not self.started:
+            raise ClientNotStarted(
+                "Run start() to start the client before accessing the main page."
+            )
+        if self._page is None:
+            raise PageNotFoundError("No page found in the browser context.")
         return self._page
 
     def get_page(self, index: int) -> Page:

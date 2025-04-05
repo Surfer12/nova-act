@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
-from nova_act.main import load_config, setup_logging
+from nova_act import load_config, setup_logging
 
 
 class TestMain(unittest.TestCase):

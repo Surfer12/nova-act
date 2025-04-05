@@ -17,7 +17,8 @@ from nova_act.types.act_metadata import ActMetadata
 from nova_act.types.errors import NovaActError
 
 
-# Decorator for allowing optional messages to override the default messages while keeping metadata mandatory
+# Decorator for allowing optional messages to override the default messages
+# while keeping metadata mandatory
 def act_error_class(default_message: str):
     def decorator(cls):
         @dataclasses.dataclass(frozen=True, repr=False)
@@ -75,7 +76,8 @@ class ActAgentError(ActError):
 
 
 @act_error_class(
-    "I'm sorry, but I can't engage in unsafe or inappropriate actions. Please try a different request."
+    "I'm sorry, but I can't engage in unsafe or inappropriate actions. "
+    "Please try a different request."
 )
 class ActGuardrailsError(ActError):
     pass

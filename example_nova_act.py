@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # Import NovaAct from the package
-
-import asyncio
 from nova_act import NovaAct
+import asyncio
 
 
 async def main() -> None:

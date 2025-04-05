@@ -34,9 +34,7 @@ def add_schema_to_prompt(prompt: str, schema: Dict[str, Any]) -> str:
     return f"{prompt}, format output with jsonschema: {schema_str}"
 
 
-def populate_json_schema_response(
-    result: ActResult, schema: Dict[str, Any]
-) -> ActResult:
+def populate_json_schema_response(result: ActResult, schema: Dict[str, Any]) -> ActResult:
     if not result.response:
         return ActResult(
             response=result.response,
