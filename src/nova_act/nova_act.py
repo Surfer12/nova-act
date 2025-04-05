@@ -42,7 +42,6 @@ from nova_act.types.errors import (
     ClientNotStarted,
     StartFailed,
     StopFailed,
-    ValidationFailed,
 )
 from nova_act.types.state.act import Act
 from nova_act.util.jsonschema import (
@@ -138,7 +137,8 @@ class NovaAct:
             This ensures the original is not modified and that each instance has its own user_data_dir.
             If user_data_dir is not specified, this flag has no effect.
         profile_directory: str
-            Directory for the Chrome user profile within user_data_dir. Only needed if using an existing Chrome profile.
+            Directory for the Chrome user profile within user_data_dir. Only needed if using an existing 
+            Chrome profile.
         extension_path : str, optional
             Path to the compiled Chrome extension for browser actuation
         screen_width: int
@@ -146,19 +146,21 @@ class NovaAct:
         screen_height: int
             Height of the screen for the playwright instance. Within range [864, 1296].
         headless: bool
-            Whether to launch the Playwright browser in headless mode. Defaults to False. Can also be enabled with
-            the `NOVA_ACT_HEADLESS` environment variable.
+            Whether to launch the Playwright browser in headless mode. Defaults to False. 
+            Can also be enabled with the `NOVA_ACT_HEADLESS` environment variable.
         chrome_channel: str, optional
-            Browser channel to use (e.g., "chromium", "chrome-beta", "msedge" etc.). Defaults to "chrome". Can also
-            be specified via `NOVA_ACT_CHROME_CHANNEL` environment variable.
+            Browser channel to use (e.g., "chromium", "chrome-beta", "msedge" etc.). Defaults to 
+            "chrome". Can also be specified via `NOVA_ACT_CHROME_CHANNEL` environment variable.
         nova_act_api_key: str
-            API key for interacting with NovaAct. Will override the NOVA_ACT_API_KEY environment variable
+            API key for interacting with NovaAct. Will override the NOVA_ACT_API_KEY 
+            environment variable
         playwright_instance: Playwright
             Add an existing Playwright instance for use
         endpoint_name: str
             The name of the inference endpoint to call for act() planning
         tty: bool
-            Whether output logs should be formatted for a terminal (true) or file (false)
+            Whether output logs should be formatted for a terminal (true) or file
+            (false)
         cdp_endpoint_url: str, optional
             A CDP endpoint to connect to
         user_agent: str, optional
@@ -308,7 +310,8 @@ class NovaAct:
     def get_page(self, index: int = -1) -> Page:
         """Get a particular playwright page by index or the currently actuating page if index == -1.
 
-        Note: the order of these pages might not reflect their tab order in the window if they have been moved
+        Note: the order of these pages might not reflect their tab order in the window if they have 
+        been moved
         """
         if not self.started:
             raise ClientNotStarted(
@@ -320,7 +323,8 @@ class NovaAct:
     def pages(self) -> list[Page]:
         """Get the current playwright pages.
 
-        Note: the order of these pages might not reflect their tab order in the window if they have been moved
+        Note: the order of these pages might not reflect their tab order in the window if they have
+        been moved
         """
         if not self.started:
             raise ClientNotStarted(
@@ -405,8 +409,10 @@ class NovaAct:
         timeout: int, optional
             The timeout (in seconds) for the task to actuate.
         max_steps: int
-            Configure the maximum number of steps (browser actuations) `act()` will take before giving up on the task.
-            Use this to make sure the agent doesn't get stuck forever trying different paths. Default is 30.
+            Configure the maximum number of steps (browser actuations) `act()` will take before giving 
+            up on the task.
+            Use this to make sure the agent doesn't get stuck forever trying different paths. 
+            Default is 30.
         schema: Dict[str, Any] | None
             An optional jsonschema, which the output should to adhere to
         endpoint_name: str

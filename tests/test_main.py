@@ -1,9 +1,9 @@
 """Tests for the main module."""
 
+import json
 import os
 import tempfile
 import unittest
-import json
 from unittest.mock import patch
 
 from nova_act.main import load_config, setup_logging

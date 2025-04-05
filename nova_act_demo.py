@@ -4,8 +4,6 @@ Nova Act Demo Script
 This script demonstrates basic usage of the Nova Act browser automation tool.
 """
 
-import os
-import sys
 from nova_act import NovaAct
 
 # Create a NovaAct instance

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Import NovaAct from the package
+
 from nova_act import NovaAct
-import os
 
 # Create a NovaAct instance
 nova = NovaAct(

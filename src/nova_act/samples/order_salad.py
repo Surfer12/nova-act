@@ -13,7 +13,8 @@
 # limitations under the License.
 """Order your favorite Sweetgreen meal.
 
-Requires specifying a user_data_dir for a browser that is logged in to order.sweetgreen.com
+Requires specifying a user_data_dir for a browser that is logged in to 
+order.sweetgreen.com
 with an account that has a credit card and home address saved.
 
 See README for how to set up user_data_dir.

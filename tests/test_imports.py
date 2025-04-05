@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Test script to verify Nova Act package requirements."""
 
-import os
 import sys
 
 print("\n=====================================================")
