@@ -82,7 +82,7 @@ def _add_bbox_to_image(image: str, response: str) -> str:
     return "data:image/jpeg;base64," + base64.b64encode(image_bytes_io.getvalue()).decode("utf-8")
 
 
-def format_run_info(steps: int, url: str, time: str, image: str, response: str):
+def format_run_info(steps: int, url: str, time: str, image: str, response: str) -> str:
     image = _add_bbox_to_image(image, response)
 
     return f"""
