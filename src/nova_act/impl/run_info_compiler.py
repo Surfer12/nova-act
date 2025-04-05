@@ -59,8 +59,8 @@ def _add_bbox_to_image(image: str, response: str) -> str:
     if not image:
         return image
 
-    # Find the first bbox in the response. Right now there can ever only be on bbox. The agent will only take one
-    # action at a time and then observe before taking the next one.
+    # Find the first bbox in the response. Right now there can ever only be on bbox. 
+    # The agent will only take one action at a time and then observe before taking the next one.
     bbox_match = _BBOX_MATCHER.search(response)
     if not bbox_match:
         return image
@@ -132,8 +132,8 @@ class RunInfoCompiler:
                 self._logs_directory = session_path
             except Exception as e:
                 _LOGGER.error(
-                    f"Failed to create directory: {session_path} with Error: {e} of type {type(e).__name__}. "
-                    f"Using default directory: {self._logs_directory}"
+                    f"Failed to create directory: {session_path} with Error: {e} "
+                    f"of type {type(e).__name__}. Using default directory: {self._logs_directory}"
                 )
         else:
             raise ValidationFailed(f"Invalid logs directory: {logs_directory}")

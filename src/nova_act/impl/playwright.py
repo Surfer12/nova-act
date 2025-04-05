@@ -128,7 +128,8 @@ class PlaywrightInstanceManager:
     ) -> Page:
         # The protocol here is as follows:
         #
-        # - Navigate a trusted page. Trusted here means it won't tamper with the content script.
+        # - Navigate a trusted page. Trusted here means it won't tamper with the content
+        #   script.
         # - Wait for the page to register listeners.
         # - Send the encryption key through that page to the extension service worker.
         # - Service worker will then register the tab id with the SDK.
@@ -149,7 +150,8 @@ class PlaywrightInstanceManager:
             POST_MESSAGE_EXPRESSION, self._encrypter.make_set_key_message()
         )
 
-        # The default opened page may contain infobars with messages while new pages should not.
+        # The default opened page may contain infobars with messages while new pages should 
+        # not.
         first_page = context.new_page()
         first_video_path = None
         if (
@@ -215,7 +217,8 @@ class PlaywrightInstanceManager:
                     f"--disable-extensions-except={self._extension_path}",
                     f"--load-extension={self._extension_path}",
                     f"--window-size={self.screen_width},{self.screen_height}",
-                    "--disable-blink-features=AutomationControlled",  # Suppress navigator.webdriver flag
+                    # Suppress navigator.webdriver flag
+                    "--disable-blink-features=AutomationControlled",
                     *(["--headless=new"] if self._headless else []),
                     *(
                         []

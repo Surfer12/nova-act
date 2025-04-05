@@ -183,8 +183,9 @@ def validate_screen_resolution(screen_width: int, screen_height: int) -> None:
 
 def validate_chrome_channel(chrome_channel: str) -> None:
     if chrome_channel not in SUPPORTED_CHANNELS:
+        supported = ', '.join(sorted(SUPPORTED_CHANNELS))
         raise InvalidChromeChannel(
-            f"Invalid Chrome channel provided. Supported channels: {', '.join(sorted(SUPPORTED_CHANNELS))}."
+            f"Invalid Chrome channel provided. Supported channels: {supported}."
         )
 
     if chrome_channel not in {"chrome", "chromium"}:
