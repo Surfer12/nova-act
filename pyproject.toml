@@ -15,7 +15,7 @@ authors = [
   {name = "Ryan Oates", email = "ryanoatsie@outlook.com"},
 ]
 license = "Apache-2.0"
-license-files = { paths = ["LICENSE"] }
+license-files = ["LICENSE"]
 readme = "README.md"
 classifiers = [
   "Programming Language :: Python :: 3",
