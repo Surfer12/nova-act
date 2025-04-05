@@ -1,7 +1,7 @@
 [build-system]
 requires = [
   "build",
-  "setuptools",
+  "setuptools>=42",
   "wheel",
 ]
 build-backend = "setuptools.build_meta"
@@ -10,23 +10,34 @@ build-backend = "setuptools.build_meta"
 name = "nova-act"
 description = "A Python SDK for Amazon Nova Act."
 dynamic = ["dependencies", "version"]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [
-  {name = "Amazon Nova Act", email="nova-act@amazon.com"},
+  {name = "Ryan Oates", email = "ryanoatsie@outlook.com"},
 ]
-license = "Apache-2.0"
+license = {text = "Apache-2.0"}
 readme = "README.md"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+]
 
 [project.optional-dependencies]
 dev = [
   "build",
+  "pytest",
+  "ruff",
+  "mypy",
   "setuptools",
   "twine",
   "wheel",
 ]
 
+[tool.setuptools]
+packages = ["nova_act"]
+
 [tool.setuptools.dynamic]
-version = {attr = "nova_act.__version__.VERSION"}
+version = {attr = "nova_act.__version__"}
 dependencies = {file = "requirements.txt"}
 
 [tool.setuptools.package-data]
@@ -44,3 +55,21 @@ default = { solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.tasks]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
