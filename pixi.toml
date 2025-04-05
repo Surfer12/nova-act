@@ -44,7 +44,7 @@ fix-diagnostics = { cmd = "python -m nova_act.diagnostics --fix-all" }
 [dependencies]
 python = ">=3.12.9,<3.13"
 pip = ">=25.0.1,<26"
-max >=25.3.0.dev2025040405,<26
+max = ">=25.3.0.dev2025040405,<26"
 pandas = ">=2.2.3,<3"
 numpy = ">=1.26.4,<2"
 types-setuptools = ">=78.1.0.20250329,<79"
