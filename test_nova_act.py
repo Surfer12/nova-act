@@ -1,7 +1,7 @@
 import pytest  # Assuming pytest is used for async tests
 
-from nova_act import ActResult, NovaAct
-from nova_act.util.jsonschema import BOOL_SCHEMA
+from src.nova_act import ActResult, NovaAct
+from src.nova_act.util.jsonschema import BOOL_SCHEMA
 
 
 @pytest.mark.asyncio  # Decorator for async pytest functions
