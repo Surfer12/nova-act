@@ -41,6 +41,15 @@ update = { cmd = "pixi update" }
 diagnose = { cmd = "python -m nova_act.diagnostics --check-all" }
 fix-diagnostics = { cmd = "python -m nova_act.diagnostics --fix-all" }
 
+# Server tasks
+# Frontend server (runs on port 5173)
+run-frontend = { cmd = "cd src/frontend && npm run dev" }
+# Backend server (runs on port 8081)
+run-backend = { cmd = "python start_server.py" }
+# Note: Run these commands in separate terminal windows:
+# Terminal 1: pixi run run-frontend
+# Terminal 2: pixi run run-backend
+
 [dependencies]
 python = ">=3.12.9,<3.13"
 pip = ">=25.0.1,<26"
