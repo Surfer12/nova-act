@@ -14,13 +14,13 @@ readme = "README.md"
 
 [tasks]
 # Development environment
-run-dev = { cmd = "python -m nova_act.main --config=configs/dev.json --debug=true --log-level=debug" }
+run-dev = { cmd = "python -m nova_act.main --config=configs/dev.json --debug --log-level=debug" }
 
 # Production environment
-run-prod = { cmd = "python -m nova_act.main --config=configs/prod.json --optimize=true" }
+run-prod = { cmd = "python -m nova_act.main --config=configs/prod.json --optimize" }
 
 # Testing environment
-run-test = { cmd = "python -m nova_act.main --config=configs/test.json --test-mode=true" }
+run-test = { cmd = "python -m nova_act.main --config=configs/test.json --test-mode" }
 
 # Build task
 build = { cmd = "python -m build" }
@@ -35,7 +35,7 @@ docs = { cmd = "mkdocs serve" }
 
 # Installation helpers
 setup = { cmd = "pip install -e '.[dev]'" }
-update = { cmd = "pixi lock --update" }
+update = { cmd = "pixi update" }
 
 # Diagnostics
 diagnose = { cmd = "python -m nova_act.diagnostics --check-all" }
@@ -53,3 +53,5 @@ build = "*"
 pytest = "*"
 ruff = "*"
 mypy = "*"
+mkdocs = "*"
+mkdocs-material = "*"

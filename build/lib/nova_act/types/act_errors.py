@@ -74,7 +74,9 @@ class ActAgentError(ActError):
     pass
 
 
-@act_error_class("I'm sorry, but I can't engage in unsafe or inappropriate actions. Please try a different request.")
+@act_error_class(
+    "I'm sorry, but I can't engage in unsafe or inappropriate actions. Please try a different request."
+)
 class ActGuardrailsError(ActError):
     pass
 

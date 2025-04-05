@@ -25,8 +25,6 @@ class BackendInfo:
     keygen_uri: str
 
 
-
-
 URLS_BY_BACKEND = {
     Backend.PROD: BackendInfo(
         "https://nova.amazon.com/agent",

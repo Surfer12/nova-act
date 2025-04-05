@@ -82,7 +82,6 @@ class WindowMessageHandler:
                 message_type = message.get("type")
 
                 if message_type == COMPLETION_PROMPT_TYPE:
-
                     response = message.get("response")
                     if response is None:
                         raise ValueError("Completion message missing response")
@@ -103,5 +102,7 @@ class WindowMessageHandler:
                     self._act.add_step(Step.from_message(message))
 
             except Exception as ex:
-                _LOGGER.error("Error handling message in dispatcher: %s", ex, exc_info=True)
+                _LOGGER.error(
+                    "Error handling message in dispatcher: %s", ex, exc_info=True
+                )
                 raise

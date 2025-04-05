@@ -27,4 +27,4 @@ else:
     print("\n✅ Python version is compatible with Nova Act.")
     print("You can install the package with 'pip install -e .'")
 
-print("\n=====================================================\n") 
+print("\n=====================================================\n")

@@ -12,8 +12,7 @@ def setup_logging(debug: bool = False):
     """Configure logging based on debug flag."""
     level = logging.DEBUG if debug else logging.INFO
     logging.basicConfig(
-        level=level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
 
@@ -62,52 +61,58 @@ def fix_configuration():
 def main():
     """Run diagnostics tools."""
     parser = argparse.ArgumentParser(description="Nova ACT Diagnostics")
-    parser.add_argument("--check-all", action="store_true", help="Run all diagnostic checks")
+    parser.add_argument(
+        "--check-all", action="store_true", help="Run all diagnostic checks"
+    )
     parser.add_argument("--fix-all", action="store_true", help="Fix all issues")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
-    
+
     # Add specific check options
     parser.add_argument("--check-env", action="store_true", help="Check environment")
     parser.add_argument("--check-deps", action="store_true", help="Check dependencies")
-    parser.add_argument("--check-config", action="store_true", help="Check configuration")
-    
+    parser.add_argument(
+        "--check-config", action="store_true", help="Check configuration"
+    )
+
     # Add specific fix options
     parser.add_argument("--fix-env", action="store_true", help="Fix environment issues")
     parser.add_argument("--fix-deps", action="store_true", help="Fix dependency issues")
-    parser.add_argument("--fix-config", action="store_true", help="Fix configuration issues")
-    
+    parser.add_argument(
+        "--fix-config", action="store_true", help="Fix configuration issues"
+    )
+
     args = parser.parse_args()
-    
+
     # Setup logging
     setup_logging(args.debug)
-    
+
     try:
         # Run checks
         if args.check_all or args.check_env:
             check_environment()
-        
+
         if args.check_all or args.check_deps:
             check_dependencies()
-        
+
         if args.check_all or args.check_config:
             check_configuration()
-        
+
         # Fix issues
         if args.fix_all or args.fix_env:
             fix_environment()
-        
+
         if args.fix_all or args.fix_deps:
             fix_dependencies()
-        
+
         if args.fix_all or args.fix_config:
             fix_configuration()
-        
+
         logger.info("Diagnostics completed successfully")
-        
+
     except Exception as e:
         logger.error(f"Error during diagnostics: {e}")
         sys.exit(1)
 
 
 if __name__ == "__main__":
-    main() 
+    main()

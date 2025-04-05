@@ -55,7 +55,9 @@ class KeyboardEventWatcher:
         self.terminal_manager = TerminalInputManager().__enter__()
 
         # Start the watcher thread
-        self.watcher_thread = threading.Thread(target=self._watch_for_trigger, daemon=True)
+        self.watcher_thread = threading.Thread(
+            target=self._watch_for_trigger, daemon=True
+        )
         self.watcher_thread.start()
 
         return self

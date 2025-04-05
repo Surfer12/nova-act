@@ -42,7 +42,9 @@ class NovaActClientErrors(Enum):
 
 def parse_errors(act: Act, backend_info: BackendInfo):
     if not isinstance(act.result, ActFailed) or not act.is_complete:
-        raise ValueError(f"Expected ActFailed result when attempting to parse, got act: {act}")
+        raise ValueError(
+            f"Expected ActFailed result when attempting to parse, got act: {act}"
+        )
 
     result = cast(ActFailed, act.result)
     message = result.response
@@ -64,7 +66,9 @@ def parse_errors(act: Act, backend_info: BackendInfo):
     return ActProtocolError(metadata=act.metadata, message=out)
 
 
-def handle_nova_act_service_error(error_string: str, act: Act, backend_info: BackendInfo):
+def handle_nova_act_service_error(
+    error_string: str, act: Act, backend_info: BackendInfo
+):
     message = NOVA_ACT_SERVICE_PREFIX
 
     try:
@@ -80,7 +84,9 @@ def handle_nova_act_service_error(error_string: str, act: Act, backend_info: Bac
         if "AGENT_GUARDRAILS_TRIGGERED" == error_dict.get("reason"):
             fields = error_dict.get("fields")
             if fields is not None and len(fields) > 0:
-                return ActGuardrailsError(message=fields[0].get("message"), metadata=act.metadata)
+                return ActGuardrailsError(
+                    message=fields[0].get("message"), metadata=act.metadata
+                )
             else:
                 return ActGuardrailsError(metadata=act.metadata)
     if 429 == code:

@@ -1,0 +1,26 @@
+site_name: Nova ACT
+site_description: A Python SDK for Amazon Nova Act
+site_author: Ryan Oates
+repo_url: https://github.com/ryanoates/nova-act
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - API Reference: api-reference.md
+  - Examples: examples.md
+
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - admonition
+  - toc:
+      permalink: true
+
+plugins:
+  - search 

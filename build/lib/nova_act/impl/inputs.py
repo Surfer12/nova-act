@@ -73,10 +73,14 @@ def validate_url(url: str, state: str) -> None:
 
     result = urlparse(url)
     if not all([result.scheme, result.netloc]):
-        raise InvalidURL(f"{state} URL provided is invalid. Did you include http:// or https:// ?")
+        raise InvalidURL(
+            f"{state} URL provided is invalid. Did you include http:// or https:// ?"
+        )
 
 
-def validate_path(path: str, description: str, empty_directory_allowed: bool = False) -> None:
+def validate_path(
+    path: str, description: str, empty_directory_allowed: bool = False
+) -> None:
     """Validate the path value.
 
     Parameters
@@ -138,12 +142,21 @@ def validate_timeout(timeout: int | None) -> None:
     if not isinstance(timeout, int):
         raise InvalidTimeout("Timeout must be an integer.")
     if timeout < MIN_TIMEOUT_S or timeout > MAX_TIMEOUT_S:
-        raise InvalidTimeout(f"Timeout must be between {MIN_TIMEOUT_S} and {MAX_TIMEOUT_S}")
+        raise InvalidTimeout(
+            f"Timeout must be between {MIN_TIMEOUT_S} and {MAX_TIMEOUT_S}"
+        )
 
 
-def check_screen_resolution_in_recommended_range(screen_width: int, screen_height: int) -> None:
+def check_screen_resolution_in_recommended_range(
+    screen_width: int, screen_height: int
+) -> None:
     # These numbers are +/- 20% of 1920x1080
-    in_range = screen_width >= 1536 and screen_width <= 2304 and screen_height >= 864 and screen_height <= 1296
+    in_range = (
+        screen_width >= 1536
+        and screen_width <= 2304
+        and screen_height >= 864
+        and screen_height <= 1296
+    )
     if not in_range:
         raise InvalidScreenResolution(
             "Screen resolution is not in the recommended range "
@@ -161,7 +174,9 @@ def validate_screen_resolution(screen_width: int, screen_height: int) -> None:
         raise InvalidScreenResolution(
             f"Invalid screen resolution. Acceptable range: [{MIN_SCREEN_SIZE}, {MAX_SCREEN_SIZE}]."
         )
-    check_screen_resolution_in_recommended_range(screen_width=screen_width, screen_height=screen_height)
+    check_screen_resolution_in_recommended_range(
+        screen_width=screen_width, screen_height=screen_height
+    )
 
 
 def validate_chrome_channel(chrome_channel: str) -> None:
@@ -196,7 +211,9 @@ def validate_base_parameters(
         validate_path(user_data_dir, "user_data_dir", empty_directory_allowed=True)
 
     if profile_directory:
-        validate_path(profile_directory, "profile_directory", empty_directory_allowed=True)
+        validate_path(
+            profile_directory, "profile_directory", empty_directory_allowed=True
+        )
 
     validate_screen_resolution(screen_width=screen_width, screen_height=screen_height)
 
@@ -231,7 +248,11 @@ def validate_length(
 
     for field_name, value in fields.items():
         if value is not None and len(value) >= MAX_PARAM_LENGTH:
-            raise InvalidInputLength(f"{field_name} exceeds max length of {MAX_PARAM_LENGTH}")
+            raise InvalidInputLength(
+                f"{field_name} exceeds max length of {MAX_PARAM_LENGTH}"
+            )
 
-    if nova_act_api_key is not None and len(nova_act_api_key) != _get_key_length_by_backend(backend):
+    if nova_act_api_key is not None and len(
+        nova_act_api_key
+    ) != _get_key_length_by_backend(backend):
         raise AuthError(backend_info=get_urls_for_backend(backend))
