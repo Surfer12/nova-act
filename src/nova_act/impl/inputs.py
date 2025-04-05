@@ -98,7 +98,8 @@ def validate_path(
 
     if not os.path.isdir(path):
         raise InvalidPath(
-            f"{description} ({path}) path provided is invalid. Please make sure you point to the right path"
+            f"{description} ({path}) path provided is invalid. "
+            "Please make sure you point to the right path"
         )
     if not empty_directory_allowed and len(os.listdir(path)) == 0:
         raise InvalidPath(f"{description} ({path}) directory cannot be empty.")
@@ -121,7 +122,8 @@ def validate_prompt(prompt: str) -> None:
 
     if not (MIN_PROMPT_LENGTH <= len(prompt) <= MAX_PROMPT_LENGTH):
         raise InvalidInputLength(
-            f"Prompt length must be between 1 and 10000 characters inclusive. Current length: {len(prompt)}"
+            f"Prompt length must be between 1 and 10000 characters inclusive. "
+            f"Current length: {len(prompt)}"
         )
 
 

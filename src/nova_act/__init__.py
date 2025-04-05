@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Fix circular import - import relatively from .nova_act instead of absolute nova_act.nova_act
+# Fix circular import - import relatively instead of absolute import
+# (from .nova_act instead of nova_act.nova_act)
 from nova_act.types.act_errors import (
     ActAgentError,
     ActCanceledError,
