@@ -59,7 +59,7 @@ class WindowMessageHandler:
         self._act: Act | None = None
         self._encrypter: MessageEncrypter = encrypter
 
-    def bind(self, act: Act):
+    def bind(self, act: Act) -> None:
         """Bind an active Act object for accumulating observations"""
         if act.is_complete:
             raise ValueError("Cannot bind a completed act for more observations")
