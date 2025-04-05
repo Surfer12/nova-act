@@ -1,0 +1,102 @@
+.fractal-thought-process {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.error {
+  color: #dc3545;
+  padding: 10px;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.loading {
+  color: #6c757d;
+  padding: 10px;
+  text-align: center;
+}
+
+.thoughts-list,
+.interventions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.thought-card,
+.intervention-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.thought-card:hover,
+.intervention-card:hover {
+  transform: translateY(-2px);
+}
+
+.thought-header,
+.intervention-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.processing-level {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.iteration {
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+.thought-content {
+  margin: 10px 0;
+}
+
+.thought-content h3 {
+  font-size: 1.1em;
+  margin: 10px 0 5px;
+  color: #495057;
+}
+
+.thought-content p {
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.intervention-button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.intervention-button:hover {
+  background: #218838;
+}
+
+.type {
+  font-weight: bold;
+  color: #17a2b8;
+}
+
+.target-thought {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #dee2e6;
+  font-size: 0.9em;
+  color: #6c757d;
+} 

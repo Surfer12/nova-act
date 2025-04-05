@@ -18,6 +18,7 @@ import shutil
 import sys
 import tempfile
 import uuid
+import asyncio
 from typing import Any, Dict, Type, cast
 
 from playwright.sync_api import Page, Playwright
@@ -55,6 +56,7 @@ from nova_act.util.logging import (
     set_logging_session,
     setup_logging,
 )
+from nova_act.bridge import NovaActBridge
 
 DEFAULT_SCREEN_WIDTH = 1600
 DEFAULT_SCREEN_HEIGHT = 900
@@ -119,6 +121,9 @@ class NovaAct:
         user_agent: str | None = None,
         logs_directory: str | None = None,
         record_video: bool = False,
+        enable_bridge: bool = True,
+        bridge_host: str = "localhost",
+        bridge_port: int = 8081,
     ):
         """Initialize a client object.
 
@@ -171,6 +176,12 @@ class NovaAct:
             Output directory for video and agent run output. Will default to a temp dir.
         record_video: bool
             Whether to record video
+        enable_bridge: bool
+            Whether to enable the WebSocket bridge for real-time updates
+        bridge_host: str
+            Host address for the WebSocket bridge
+        bridge_port: int
+            Port for the WebSocket bridge
         """
 
         self._backend = Backend.PROD
@@ -272,6 +283,8 @@ class NovaAct:
         )
 
         self._dispatcher: ExtensionDispatcher | None = None
+        self._bridge = NovaActBridge(bridge_host, bridge_port) if enable_bridge else None
+        self._bridge_task = None
 
     def __del__(self) -> None:
         if (
@@ -344,8 +357,8 @@ class NovaAct:
         assert self._dispatcher is not None
         return self._dispatcher
 
-    def start(self) -> None:
-        """Start the client."""
+    async def start(self) -> None:
+        """Start the client and WebSocket bridge."""
         if self.started:
             _LOGGER.warning(
                 "Attention: Client is already started; to start over, run stop()."
@@ -370,12 +383,15 @@ class NovaAct:
                     f"\nstart session {session_id} on {self._starting_page}\n"
                 )
                 set_logging_session(session_id)
+
+            if self._bridge:
+                self._bridge_task = asyncio.create_task(self._bridge.start())
         except Exception as e:
             self.stop()
             raise StartFailed from e
 
-    def stop(self) -> None:
-        """Stop the client."""
+    async def stop(self) -> None:
+        """Stop the client and WebSocket bridge."""
         try:
             if not self.started:
                 _LOGGER.warning("Attention: Client is already stopped.")
@@ -387,10 +403,18 @@ class NovaAct:
             self._playwright._session_id = None
             _TRACE_LOGGER.info("\nend session\n")
             set_logging_session(None)
+
+            if self._bridge and self._bridge_task:
+                await self._bridge.stop()
+                self._bridge_task.cancel()
+                try:
+                    await self._bridge_task
+                except asyncio.CancelledError:
+                    pass
         except Exception as e:
             raise StopFailed from e
 
-    def act(
+    async def act(
         self,
         prompt: str,
         *,
@@ -402,33 +426,7 @@ class NovaAct:
         model_top_k: int | None = None,
         model_seed: int | None = None,
     ) -> ActResult:
-        """Actuate on the web browser using natural language.
-
-        Parameters
-        ----------
-        prompt: str
-            The natural language task to actuate on the web browser.
-        timeout: int, optional
-            The timeout (in seconds) for the task to actuate.
-        max_steps: int
-            Configure the maximum number of steps (browser actuations) `act()` will take before 
-            giving up on the task. Use this to make sure the agent doesn't get stuck forever 
-            trying different paths.
-            Default is 30.
-        schema: Dict[str, Any] | None
-            An optional jsonschema, which the output should to adhere to
-        endpoint_name: str
-            The name of the inference endpoint to call for act() planning
-
-        Returns
-        -------
-        ActResult
-
-        Raises
-        ------
-        ActError
-        ValidationFailed
-        """
+        """Actuate a natural language command and broadcast updates."""
         if not self.started:
             raise ClientNotStarted(
                 "Run start() to start the client before calling act()."
@@ -460,7 +458,7 @@ class NovaAct:
         _TRACE_LOGGER.info(f'{get_session_id_prefix()}act("{prompt}")')
 
         try:
-            response = self.dispatcher.dispatch_and_wait_for_prompt_completion(act)
+            response = await self.dispatcher.dispatch_and_wait_for_prompt_completion(act)
             if isinstance(response, ActError):
                 raise response
         except (ActError, AuthError):
@@ -470,5 +468,17 @@ class NovaAct:
 
         if schema:
             response = populate_json_schema_response(response, schema)
+
+        # Broadcast thought update if bridge is enabled
+        if self._bridge and response.success:
+            thought_data = {
+                "prompt": prompt,
+                "result": response.result,
+                "metadata": response.metadata,
+                "processingLevel": response.processing_level,
+                "iterationCount": response.iteration_count,
+                "timestamp": asyncio.get_event_loop().time()
+            }
+            await self._bridge.send_thought_update(thought_data)
 
         return response
