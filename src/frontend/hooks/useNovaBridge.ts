@@ -35,7 +35,7 @@ interface BridgeMessage {
   data: Thought | Intervention;
 }
 
-export function useNovaBridge(wsUrl: string = 'ws://localhost:8080/ws') {
+export function useNovaBridge(wsUrl: string = 'ws://localhost:8081') {
   const [state, updateState] = useImmer<BridgeState>({
     thoughts: [],
     interventions: [],
@@ -110,7 +110,7 @@ export function useNovaBridge(wsUrl: string = 'ws://localhost:8080/ws') {
     processingLevel: string = 'mesoLevel'
   ) => {
     try {
-      const response = await fetch('http://localhost:8080/api/interventions', {
+      const response = await fetch('http://localhost:8081/api/interventions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
