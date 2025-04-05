@@ -43,9 +43,12 @@ fix-diagnostics = { cmd = "python -m nova_act.diagnostics --fix-all" }
 
 # Server tasks
 # Frontend server (runs on port 5173)
-run-frontend = { cmd = "cd src/frontend && npm run dev" }
+run-frontend = { cmd = "cd /Users/ryandavidoates/yamls && npm run dev" }
 # Backend server (runs on port 8081)
 run-backend = { cmd = "python start_server.py" }
+# Clear backend cache and restart server
+clear-cache = { cmd = "pkill -f 'python start_server.py' || true && python -c 'import shutil; import pathlib; [shutil.rmtree(p) for p in pathlib.Path(\".\").rglob(\"__pycache__\")]; shutil.rmtree(\"src/nova_act/artifacts\", ignore_errors=True); print(\"Cache cleared successfully!\")'" }
+restart-server = { cmd = "pixi run clear-cache && pixi run run-backend" }
 # Note: Run these commands in separate terminal windows:
 # Terminal 1: pixi run run-frontend
 # Terminal 2: pixi run run-backend
