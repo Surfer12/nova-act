@@ -97,4 +97,5 @@ async def main(
 
 if __name__ == "__main__":
     import asyncio
+
     fire.Fire(lambda **kwargs: asyncio.run(main(**kwargs)))

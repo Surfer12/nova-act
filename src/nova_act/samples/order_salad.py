@@ -50,4 +50,5 @@ async def main(user_data_dir: str, order: str = "Shroomami", headless: bool = Fa
 
 if __name__ == "__main__":
     import asyncio
+
     fire.Fire(lambda **kwargs: asyncio.run(main(**kwargs)))
