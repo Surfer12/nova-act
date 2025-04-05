@@ -59,8 +59,8 @@ def _add_bbox_to_image(image: str, response: str) -> str:
     if not image:
         return image
 
-    # Find the first bbox in the response. Right now there can ever only be on bbox. The agent will only take one
-    # action at a time and then observe before taking the next one.
+    # Find the first bbox in the response. Right now there can ever only be on bbox.
+    # The agent will only take one action at a time and then observe before taking the next one.
     bbox_match = _BBOX_MATCHER.search(response)
     if not bbox_match:
         return image
@@ -79,12 +79,10 @@ def _add_bbox_to_image(image: str, response: str) -> str:
     pil_image.save(image_bytes_io, format="JPEG")
 
     # Return the modified image with the data prefix.
-    return "data:image/jpeg;base64," + base64.b64encode(
-        image_bytes_io.getvalue()
-    ).decode("utf-8")
+    return "data:image/jpeg;base64," + base64.b64encode(image_bytes_io.getvalue()).decode("utf-8")
 
 
-def format_run_info(steps: int, url: str, time: str, image: str, response: str):
+def format_run_info(steps: int, url: str, time: str, image: str, response: str) -> str:
     image = _add_bbox_to_image(image, response)
 
     return f"""
@@ -132,8 +130,8 @@ class RunInfoCompiler:
                 self._logs_directory = session_path
             except Exception as e:
                 _LOGGER.error(
-                    f"Failed to create directory: {session_path} with Error: {e} of type {type(e).__name__}. "
-                    f"Using default directory: {self._logs_directory}"
+                    f"Failed to create directory: {session_path} with Error: {e} "
+                    f"of type {type(e).__name__}. Using default directory: {self._logs_directory}"
                 )
         else:
             raise ValidationFailed(f"Invalid logs directory: {logs_directory}")
@@ -164,9 +162,7 @@ class RunInfoCompiler:
 
             # Compile request and response JSON
             request_response_file_name = f"act_{act.id}_calls.json"
-            json_file_path = os.path.join(
-                self._logs_directory, request_response_file_name
-            )
+            json_file_path = os.path.join(self._logs_directory, request_response_file_name)
 
             step_info = []
             for step in act.steps:

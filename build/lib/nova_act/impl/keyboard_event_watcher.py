@@ -14,6 +14,7 @@
 import select
 import sys
 import threading
+from typing import Optional
 
 from nova_act.util.terminal_manager import TerminalInputManager
 
@@ -32,7 +33,7 @@ class KeyboardEventWatcher:
 
     key: str
     trigger: threading.Event
-    watcher_thread: threading.Thread | None
+    watcher_thread: Optional[threading.Thread]
     final_stop: bool
     terminal_manager: TerminalInputManager
 
@@ -42,7 +43,7 @@ class KeyboardEventWatcher:
         self.final_stop = False
         self.watcher_thread = None
 
-    def _watch_for_trigger(self):
+    def _watch_for_trigger(self) -> None:
         while not self.final_stop:
             i, _, _ = select.select([sys.stdin], [], [], 0)
             if i != [] and self.key == sys.stdin.read(1):
@@ -50,19 +51,22 @@ class KeyboardEventWatcher:
                     continue
                 self.trigger.set()
 
-    def __enter__(self):
+    def __enter__(self) -> "KeyboardEventWatcher":
         """Override terminal and start new thread when watcher is entered."""
         self.terminal_manager = TerminalInputManager().__enter__()
 
         # Start the watcher thread
-        self.watcher_thread = threading.Thread(
-            target=self._watch_for_trigger, daemon=True
-        )
+        self.watcher_thread = threading.Thread(target=self._watch_for_trigger, daemon=True)
         self.watcher_thread.start()
 
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: BaseException | None,
+    ) -> bool:
         """Clean up the watcher thread and reset terminal when exiting the context."""
         if self.terminal_manager:
             self.terminal_manager.__exit__(exc_type, exc_val, exc_tb)
@@ -72,8 +76,8 @@ class KeyboardEventWatcher:
             self.watcher_thread.join()
         return False  # Don't suppress any exceptions
 
-    def is_triggered(self):
+    def is_triggered(self) -> bool:
         return self.trigger.is_set()
 
-    def reset(self):
+    def reset(self) -> None:
         self.trigger.clear()

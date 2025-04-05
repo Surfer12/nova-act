@@ -13,7 +13,8 @@
 # limitations under the License.
 """Order your favorite Sweetgreen meal.
 
-Requires specifying a user_data_dir for a browser that is logged in to order.sweetgreen.com
+Requires specifying a user_data_dir for a browser that is logged in to
+order.sweetgreen.com
 with an account that has a credit card and home address saved.
 
 See README for how to set up user_data_dir.
@@ -27,13 +28,13 @@ import fire  # type: ignore
 from nova_act import NovaAct
 
 
-def main(user_data_dir: str, order: str = "Shroomami", headless: bool = False):
+async def main(user_data_dir: str, order: str = "Shroomami", headless: bool = False):
     with NovaAct(
         starting_page="https://order.sweetgreen.com",
         user_data_dir=user_data_dir,
         headless=headless,
     ) as nova:
-        nova.act(
+        await nova.act(
             "If there is a cookie banner, close it. "
             "Click Menu at the top of the page. "
             "Click Delivery on the sidebar. "
@@ -48,4 +49,6 @@ def main(user_data_dir: str, order: str = "Shroomami", headless: bool = False):
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    import asyncio
+
+    fire.Fire(lambda **kwargs: asyncio.run(main(**kwargs)))

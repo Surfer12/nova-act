@@ -22,17 +22,17 @@ import fire  # type: ignore
 from nova_act import NovaAct
 
 
-def main(record_video: bool = False):
+async def main(record_video: bool = False):
     with NovaAct(
         starting_page="https://www.amazon.com",
         record_video=record_video,
     ) as nova:
-        nova.act("search for a coffee maker")
-        nova.act("select the first result")
-        nova.act(
-            "scroll down or up until you see 'add to cart' and then click 'add to cart'"
-        )
+        await nova.act("search for a coffee maker")
+        await nova.act("select the first result")
+        await nova.act("scroll down or up until you see 'add to cart' and then click 'add to cart'")
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    import asyncio
+
+    fire.Fire(lambda **kwargs: asyncio.run(main(**kwargs)))

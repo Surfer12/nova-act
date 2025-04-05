@@ -11,6 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Nova Act - A Python SDK for Amazon Nova Act."""
+
+from nova_act.bridge import NovaActBridge
 from nova_act.nova_act import NovaAct
 from nova_act.types.act_errors import (
     ActAgentError,
@@ -34,13 +38,15 @@ from nova_act.types.errors import (
 )
 from nova_act.util.jsonschema import BOOL_SCHEMA
 
+__version__ = "0.1.0"
 __all__ = [
     "NovaAct",
+    "NovaActBridge",
+    "ActError",
     "ActAgentError",
     "ActCanceledError",
     "ActClientError",
     "ActDispatchError",
-    "ActError",
     "ActExceededMaxStepsError",
     "ActGuardrailsError",
     "ActInternalServerError",

@@ -14,12 +14,37 @@
 import json
 import os
 import pathlib
-from platform import freedesktop_os_release, system
+import sys
+from platform import system
+from typing import Any, Dict, List, Union
+
+# The freedesktop_os_release function was added in Python 3.10
+# For older Python versions, we'll implement a basic fallback
+if sys.version_info >= (3, 10):
+    from platform import freedesktop_os_release
+else:
+
+    def freedesktop_os_release():
+        """Simple fallback for freedesktop_os_release on Python < 3.10."""
+        try:
+            with open("/etc/os-release") as f:
+                info = {}
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    k, v = line.split("=", 1)
+                    v = v.strip('"')
+                    info[k] = v
+                return info
+        except (FileNotFoundError, PermissionError):
+            return {}
+
 
 from nova_act.types.errors import UnsupportedOperatingSystem
 
 
-def decode_nested_json(obj: dict | list | str):
+def decode_nested_json(obj: Union[Dict[Any, Any], List[Any], str]):
     """Decode a mixed JSON dict/list/string."""
     if isinstance(obj, dict):
         return {key: decode_nested_json(value) for key, value in obj.items()}
@@ -62,9 +87,7 @@ def should_install_chromium_dependencies() -> bool:
     if os_release.get("NAME", "") == "Amazon Linux":
         if os_release.get("VERSION", "") == "2023":
             return False
-        raise UnsupportedOperatingSystem(
-            "NovaAct does not support Amazon Linux below version 2023"
-        )
+        raise UnsupportedOperatingSystem("NovaAct does not support Amazon Linux below version 2023")
 
     return True
 

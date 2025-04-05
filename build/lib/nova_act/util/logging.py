@@ -15,6 +15,7 @@ import logging
 import os
 import sys
 from contextvars import ContextVar
+from typing import List, Optional
 
 _session_id = ContextVar("session_id", default=None)
 
@@ -26,7 +27,7 @@ def get_session_id_prefix() -> str:
     return f"{session_id[:4]}> "
 
 
-def set_logging_session(session_id: str | None) -> None:
+def set_logging_session(session_id: Optional[str]) -> None:
     _session_id.set(session_id)  # type: ignore
 
 
@@ -47,9 +48,7 @@ def setup_logging(module_name: str) -> logging.Logger:
     # Add a handler only if it hasn't been already set up.
     if not logger.hasHandlers():
         handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(get_log_level())
@@ -78,7 +77,7 @@ class LoadScroller:
             print(".", end="", flush=True, file=sys.stderr)
 
 
-def create_warning_box(messages: list[str]) -> str:
+def create_warning_box(messages: List[str]) -> str:
     # Find the longest line to determine box width
     max_length = max(len(line) for line in messages)
     width = max_length + 4  # 4 accounts for spaces and stars on sides

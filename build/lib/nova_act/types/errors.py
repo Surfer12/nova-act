@@ -27,11 +27,13 @@ Wrapper classes for unhandled exceptions
 
 
 class StartFailed(NovaActError):
-    """Exception raised when the client fails during start() for an otherwise unhandled reason."""
+    """Exception raised when the client fails during start() for an otherwise unhandled
+    reason."""
 
 
 class StopFailed(NovaActError):
-    """Exception raised when the client fails during stop() for an otherwise unhandled reason."""
+    """Exception raised when the client fails during stop() for an otherwise unhandled
+    reason."""
 
 
 """
