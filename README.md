@@ -36,7 +36,7 @@ Navigate to https://nova.amazon.com/act and generate an API key.
 
 To save it as an environment variable, execute in the terminal:
 ```sh
-export NOVA_ACT_API_KEY="your_api_key"
+export NOVA_ACT_API_KEY="API_KEY"
 ```
 
 ### Installation
@@ -359,19 +359,19 @@ nova = NovaAct(..., user_agent="MyUserAgent/2.7")
 ### Logging
 
 By default, `NovaAct` will emit all logs level `logging.INFO` or above. This can be overridden by specifying an integer value under the `NOVA_ACT_LOG_LEVEL` environment variable. Integers should correspond to [Python logging levels](https://docs.python.org/3/library/logging.html#logging-levels).
- 
+
 ### Viewing act traces
- 
+
 After an `act()` finishes, it will output traces of what it did in a self-contained html file. The location of the file is printed in the console trace.
- 
+
 ```sh
 > ** View your act run here: /var/folders/6k/75j3vkvs62z0lrz5bgcwq0gw0000gq/T/tmpk7_23qte_nova_act_logs/15d2a29f-a495-42fb-96c5-0fdd0295d337/act_844b076b-be57-4014-b4d8-6abed1ac7a5e_output.html
 ```
- 
+
 You can change the directory for this by passing in a `logs_directory` argument to `NovaAct`.
- 
+
 ### Recording a session
- 
+
 You can record an entire browser session easily by setting the `logs_directory` and specifying `record_video=True` in the constructor for `NovaAct`.
 
 ## Known limitations
@@ -444,13 +444,12 @@ nova.page.keyboard.type("hello")
 ```
 
 ## Report a Bug
-Help us improve! If you notice any issues, please let us know by submitting a bug report via nova-act@amazon.com. 
+Help us improve! If you notice any issues, please let us know by submitting a bug report via nova-act@amazon.com.
 Be sure to include the following in the email:
 - Description of the issue;
 - Session ID, which will have been printed out as a console log message;
 - Script of the workflow you are using.
-	 
+
 Your feedback is valuable in ensuring a better experience for everyone.
 
 Thanks for experimenting with Nova Act!
-

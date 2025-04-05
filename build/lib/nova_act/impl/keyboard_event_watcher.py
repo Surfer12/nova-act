@@ -14,7 +14,6 @@
 import select
 import sys
 import threading
-from typing import Optional
 
 from nova_act.util.terminal_manager import TerminalInputManager
 
@@ -33,7 +32,7 @@ class KeyboardEventWatcher:
 
     key: str
     trigger: threading.Event
-    watcher_thread: Optional[threading.Thread]
+    watcher_thread: threading.Thread | None
     final_stop: bool
     terminal_manager: TerminalInputManager
 

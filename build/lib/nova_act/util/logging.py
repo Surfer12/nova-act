@@ -14,9 +14,7 @@
 import logging
 import os
 import sys
-import threading
 from contextvars import ContextVar
-from typing import Callable, List, Optional, Union
 
 _session_id = ContextVar("session_id", default=None)
 
@@ -28,7 +26,7 @@ def get_session_id_prefix() -> str:
     return f"{session_id[:4]}> "
 
 
-def set_logging_session(session_id: Optional[str]) -> None:
+def set_logging_session(session_id: str | None) -> None:
     _session_id.set(session_id)  # type: ignore
 
 
@@ -78,7 +76,7 @@ class LoadScroller:
             print(".", end="", flush=True, file=sys.stderr)
 
 
-def create_warning_box(messages: List[str]) -> str:
+def create_warning_box(messages: list[str]) -> str:
     # Find the longest line to determine box width
     max_length = max(len(line) for line in messages)
     width = max_length + 4  # 4 accounts for spaces and stars on sides
