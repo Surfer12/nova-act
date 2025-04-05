@@ -14,11 +14,11 @@ requires-python = ">=3.12"
 authors = [
   {name = "Ryan Oates", email = "ryanoatsie@outlook.com"},
 ]
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
+license-files = { paths = ["LICENSE"] }
 readme = "README.md"
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
 ]
 

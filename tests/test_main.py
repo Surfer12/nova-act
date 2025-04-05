@@ -12,7 +12,7 @@ from nova_act.main import load_config, setup_logging
 class TestMain(unittest.TestCase):
     """Test cases for the main module."""
 
-    def test_load_config(self):
+    def test_load_config(self) -> None:
         """Test loading configuration from a file."""
         test_config = {"environment": "test", "logging": {"level": "debug"}}
 
@@ -32,7 +32,7 @@ class TestMain(unittest.TestCase):
             os.unlink(temp_name)
 
     @patch("logging.basicConfig")
-    def test_setup_logging(self, mock_basic_config):
+    def test_setup_logging(self, mock_basic_config: patch) -> None:
         """Test setting up logging with different log levels."""
         # Test with debug level
         setup_logging("debug")

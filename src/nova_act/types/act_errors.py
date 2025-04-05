@@ -17,7 +17,7 @@ from nova_act.types.act_metadata import ActMetadata
 from nova_act.types.errors import NovaActError
 
 
-# Decorator for allowing optional messages to override the default messages 
+# Decorator for allowing optional messages to override the default messages
 # while keeping metadata mandatory
 def act_error_class(default_message: str):
     def decorator(cls):
