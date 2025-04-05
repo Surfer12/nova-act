@@ -2,10 +2,15 @@ cryptography
 fire
 install_playwright
 jsonschema
-pandas
+pandas>=2.2.3,<3
 pillow
 playwright==1.48.0
 pydantic>=2.10.6
 requests
 retry
 pytz
+numpy>=1.26.4,<2
+max>=25.3.0.dev2025040405,<26
+pytest>=8.0.0
+ruff>=0.0.292
+mypy>=1.5.1

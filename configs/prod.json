@@ -1,0 +1,16 @@
+{
+  "environment": "production",
+  "logging": {
+    "level": "info",
+    "file": "logs/nova_act_prod.log",
+    "console": false
+  },
+  "api": {
+    "host": "0.0.0.0",
+    "port": 80,
+    "debug": false
+  },
+  "features": {
+    "experimental": false
+  }
+} 

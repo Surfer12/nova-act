@@ -1,11 +1,45 @@
 [project]
 authors = ["Ryan Oates <ryanoatsie@outlook.com>"]
-channels = ["https://conda.modular.com/max-nightly", "https://conda.modular.com/max", "https://repo.prefix.dev/modular-community", "conda-forge"]
+channels = [
+    "https://conda.modular.com/max-nightly",
+    "https://conda.modular.com/max",
+    "https://repo.prefix.dev/modular-community",
+    "conda-forge",
+]
 name = "nova-act"
 platforms = ["osx-arm64"]
 version = "0.1.0"
+description = "Nova ACT project"
+readme = "README.md"
 
 [tasks]
+# Development environment
+run-dev = { cmd = "python -m nova_act.main --config=configs/dev.json --debug=true --log-level=debug" }
+
+# Production environment
+run-prod = { cmd = "python -m nova_act.main --config=configs/prod.json --optimize=true" }
+
+# Testing environment
+run-test = { cmd = "python -m nova_act.main --config=configs/test.json --test-mode=true" }
+
+# Build task
+build = { cmd = "python -m build" }
+
+# Utility tasks
+test = { cmd = "pytest tests/" }
+lint = { cmd = "ruff check . && mypy ." }
+format = { cmd = "ruff format ." }
+
+# Documentation
+docs = { cmd = "mkdocs serve" }
+
+# Installation helpers
+setup = { cmd = "pip install -e '.[dev]'" }
+update = { cmd = "pixi lock --update" }
+
+# Diagnostics
+diagnose = { cmd = "python -m nova_act.diagnostics --check-all" }
+fix-diagnostics = { cmd = "python -m nova_act.diagnostics --fix-all" }
 
 [dependencies]
 python = ">=3.12.9,<3.13"
@@ -13,3 +47,9 @@ pip = ">=25.0.1,<26"
 max = ">=25.3.0.dev2025040405,<26"
 pandas = ">=2.2.3,<3"
 numpy = ">=1.26.4,<2"
+
+[pypi-dependencies]
+build = "*"
+pytest = "*"
+ruff = "*"
+mypy = "*"

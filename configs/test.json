@@ -1,0 +1,20 @@
+{
+  "environment": "test",
+  "logging": {
+    "level": "debug",
+    "file": "logs/nova_act_test.log",
+    "console": true
+  },
+  "api": {
+    "host": "localhost",
+    "port": 8080,
+    "debug": true
+  },
+  "features": {
+    "experimental": false
+  },
+  "test": {
+    "mock_data": true,
+    "coverage": true
+  }
+} 
