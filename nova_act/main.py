@@ -4,7 +4,7 @@ import argparse
 import json
 import logging
 import sys
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def load_config(config_file: str) -> Dict[str, Any]:

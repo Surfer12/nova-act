@@ -14,9 +14,8 @@
 import logging
 import os
 import sys
-import threading
 from contextvars import ContextVar
-from typing import Callable, List, Optional, Union
+from typing import List, Optional
 
 _session_id = ContextVar("session_id", default=None)
 

@@ -1,4 +1,4 @@
-from nova_act import NovaAct, BOOL_SCHEMA
+from nova_act import BOOL_SCHEMA, NovaAct
 
 
 def test_basic_functionality():

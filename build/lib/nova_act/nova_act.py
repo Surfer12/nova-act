@@ -38,7 +38,6 @@ from nova_act.types.errors import (
     ClientNotStarted,
     StartFailed,
     StopFailed,
-    ValidationFailed,
 )
 from nova_act.types.state.act import Act
 from nova_act.util.jsonschema import (

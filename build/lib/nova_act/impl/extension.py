@@ -13,8 +13,7 @@
 # limitations under the License.
 import time
 from contextlib import nullcontext
-from dataclasses import replace
-from typing import ContextManager, cast
+from typing import ContextManager
 
 from playwright.sync_api import Error as PlaywrightError
 from retry.api import retry_call

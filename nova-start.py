@@ -1,6 +1,7 @@
-from nova_act import NovaAct
 import logging
 import os
+
+from nova_act import NovaAct
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

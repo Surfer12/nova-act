@@ -16,7 +16,7 @@ import os
 import pathlib
 import sys
 from platform import system
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 # The freedesktop_os_release function was added in Python 3.10
 # For older Python versions, we'll implement a basic fallback

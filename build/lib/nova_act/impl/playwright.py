@@ -15,9 +15,8 @@ import os
 from typing import cast
 
 from install_playwright import install
-from playwright.sync_api import BrowserContext
+from playwright.sync_api import BrowserContext, Page, Playwright, Video, sync_playwright
 from playwright.sync_api import Error as PlaywrightError
-from playwright.sync_api import Page, Playwright, Video, sync_playwright
 
 from nova_act.impl.common import should_install_chromium_dependencies
 from nova_act.impl.message_encrypter import MessageEncrypter
