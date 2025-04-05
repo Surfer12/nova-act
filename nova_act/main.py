@@ -42,7 +42,7 @@ def main():
 
     try:
         # Load configuration
-        config = load_config(args.config)
+        _ = load_config(args.config)  # Config loaded but not used in this part of the code
 
         logger.info(f"Starting Nova ACT with configuration from {args.config}")
         if args.debug:

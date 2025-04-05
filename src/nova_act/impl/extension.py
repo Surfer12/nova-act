@@ -234,7 +234,9 @@ class ExtensionDispatcher:
                     for step in act.steps[num_steps_observed:]:
                         model_response = step.model_output.awl_raw_program
                         newline = "\n"
-                        formatted_response = f"\n{get_session_id_prefix()}{model_response.replace(newline, newline + '>> ')}"
+                        replacement = newline + '>> '
+                        replaced_response = model_response.replace(newline, replacement)
+                        formatted_response = f"\n{get_session_id_prefix()}{replaced_response}"
                         _TRACE_LOGGER.info(formatted_response)
                     num_steps_observed = len(act.steps)
 
