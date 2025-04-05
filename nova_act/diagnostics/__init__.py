@@ -1,1 +1,1 @@
-"""Diagnostics module for Nova ACT.""" 
+"""Diagnostics module for Nova ACT."""

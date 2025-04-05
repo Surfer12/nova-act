@@ -29,7 +29,9 @@ def main(record_video: bool = False):
     ) as nova:
         nova.act("search for a coffee maker")
         nova.act("select the first result")
-        nova.act("scroll down or up until you see 'add to cart' and then click 'add to cart'")
+        nova.act(
+            "scroll down or up until you see 'add to cart' and then click 'add to cart'"
+        )
 
 
 if __name__ == "__main__":

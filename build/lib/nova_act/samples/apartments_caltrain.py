@@ -47,7 +47,9 @@ class CaltrainBiking(BaseModel):
     biking_distance_miles: float
 
 
-def add_biking_distance(apartment: Apartment, caltrain_city: str, headless: bool) -> CaltrainBiking | None:
+def add_biking_distance(
+    apartment: Apartment, caltrain_city: str, headless: bool
+) -> CaltrainBiking | None:
     with NovaAct(
         starting_page="https://maps.google.com/",
         headless=headless,
@@ -58,7 +60,10 @@ def add_biking_distance(apartment: Apartment, caltrain_city: str, headless: bool
             f"Enter '{apartment.address}' into the starting point field and press enter. "
             "Click the bicycle icon for cycling directions."
         )
-        result = nova.act("Return the shortest time and distance for biking", schema=CaltrainBiking.model_json_schema())
+        result = nova.act(
+            "Return the shortest time and distance for biking",
+            schema=CaltrainBiking.model_json_schema(),
+        )
         if not result.matches_schema:
             print(f"Invalid JSON {result=}")
             return None
@@ -79,7 +84,6 @@ def main(
         starting_page="https://zumper.com/",
         headless=headless,
     ) as nova:
-
         nova.act(
             "Close any cookie banners. "
             f"Search for apartments near {caltrain_city}, CA, "
@@ -90,7 +94,8 @@ def main(
 
         for _ in range(5):  # Scroll down a max of 5 times.
             result = nova.act(
-                "Return the currently visible list of apartments", schema=ApartmentList.model_json_schema()
+                "Return the currently visible list of apartments",
+                schema=ApartmentList.model_json_schema(),
             )
             if not result.matches_schema:
                 print(f"Invalid JSON {result=}")
@@ -106,14 +111,18 @@ def main(
     apartments_with_biking = []
     with ThreadPoolExecutor() as executor:
         future_to_apartment = {
-            executor.submit(add_biking_distance, apartment, caltrain_city, headless): apartment
+            executor.submit(
+                add_biking_distance, apartment, caltrain_city, headless
+            ): apartment
             for apartment in all_apartments
         }
         for future in as_completed(future_to_apartment.keys()):
             apartment = future_to_apartment[future]
             caltrain_biking = future.result()
             if caltrain_biking is not None:
-                apartments_with_biking.append(apartment.model_dump() | caltrain_biking.model_dump())
+                apartments_with_biking.append(
+                    apartment.model_dump() | caltrain_biking.model_dump()
+                )
             else:
                 apartments_with_biking.append(apartment.model_dump())
 

@@ -29,12 +29,16 @@ class ActMetadata:
 
         # Convert Unix timestamps to readable format if they exist
         start_time_str = (
-            datetime.fromtimestamp(self.start_time, tz=local_tz).strftime("%Y-%m-%d %H:%M:%S.%f %Z")
+            datetime.fromtimestamp(self.start_time, tz=local_tz).strftime(
+                "%Y-%m-%d %H:%M:%S.%f %Z"
+            )
             if self.start_time is not None
             else "None"
         )
         end_time_str = (
-            datetime.fromtimestamp(self.end_time, tz=local_tz).strftime("%Y-%m-%d %H:%M:%S.%f %Z")
+            datetime.fromtimestamp(self.end_time, tz=local_tz).strftime(
+                "%Y-%m-%d %H:%M:%S.%f %Z"
+            )
             if self.end_time is not None
             else "None"
         )

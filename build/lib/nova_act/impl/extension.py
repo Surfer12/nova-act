@@ -25,11 +25,26 @@ from nova_act.impl.keyboard_event_watcher import KeyboardEventWatcher
 from nova_act.impl.playwright import PlaywrightInstanceManager
 from nova_act.impl.protocol import parse_errors
 from nova_act.impl.run_info_compiler import RunInfoCompiler
-from nova_act.impl.window_messages import CANCEL_PROMPT_TYPE, DISPATCH_PROMPT_TYPE, POST_MESSAGE_EXPRESSION
-from nova_act.types.act_errors import ActCanceledError, ActClientError, ActDispatchError, ActError
+from nova_act.impl.window_messages import (
+    CANCEL_PROMPT_TYPE,
+    DISPATCH_PROMPT_TYPE,
+    POST_MESSAGE_EXPRESSION,
+)
+from nova_act.types.act_errors import (
+    ActCanceledError,
+    ActClientError,
+    ActDispatchError,
+    ActError,
+)
 from nova_act.types.act_result import ActResult
 from nova_act.types.state.act import Act, ActCanceled, ActFailed, ActSucceeded
-from nova_act.util.logging import LoadScroller, get_session_id_prefix, is_quiet, make_trace_logger, setup_logging
+from nova_act.util.logging import (
+    LoadScroller,
+    get_session_id_prefix,
+    is_quiet,
+    make_trace_logger,
+    setup_logging,
+)
 
 # Check every 0.5 seconds, for a total of 30 seconds.
 DEFAULT_POLL_SLEEP_S = 0.5
@@ -46,8 +61,6 @@ DEFAULT_RETRY_TRIES = 5
 
 _LOGGER = setup_logging(__name__)
 _TRACE_LOGGER = make_trace_logger()
-
-
 
 
 class ExtensionDispatcher:
@@ -96,9 +109,13 @@ class ExtensionDispatcher:
 
         """
         cancel_prompt_message = {"type": CANCEL_PROMPT_TYPE}
-        encrypted_message = self._playwright_manager.encrypter.encrypt(cancel_prompt_message)
+        encrypted_message = self._playwright_manager.encrypter.encrypt(
+            cancel_prompt_message
+        )
         try:
-            self._playwright_manager.main_page.evaluate(POST_MESSAGE_EXPRESSION, encrypted_message)
+            self._playwright_manager.main_page.evaluate(
+                POST_MESSAGE_EXPRESSION, encrypted_message
+            )
         except PlaywrightError:
             if self._verbose_errors:
                 _LOGGER.error("Encountered PlaywrightError", exc_info=True)
@@ -147,10 +164,14 @@ class ExtensionDispatcher:
         if act.model_seed is not None:
             pending_action_message["modelSeed"] = str(act.model_seed)
 
-        encrypted_message = self._playwright_manager.encrypter.encrypt(pending_action_message)
+        encrypted_message = self._playwright_manager.encrypter.encrypt(
+            pending_action_message
+        )
 
         try:
-            self._playwright_manager.main_page.evaluate(POST_MESSAGE_EXPRESSION, encrypted_message)
+            self._playwright_manager.main_page.evaluate(
+                POST_MESSAGE_EXPRESSION, encrypted_message
+            )
         except PlaywrightError:
             if self._verbose_errors:
                 _LOGGER.error("Encountered PlaywrightError", exc_info=True)
@@ -181,11 +202,12 @@ class ExtensionDispatcher:
         _LOGGER.debug(f"SDK version: {SDK_VERSION}")
 
         kb_cm: KeyboardEventWatcher | ContextManager[None] = (
-            KeyboardEventWatcher(chr(24), "ctrl+x", "stop agent act() call without quitting the browser")
+            KeyboardEventWatcher(
+                chr(24), "ctrl+x", "stop agent act() call without quitting the browser"
+            )
             if self._tty
             else nullcontext()
         )
-
 
         with kb_cm as watcher:
             # dispatch request to Extension
@@ -205,7 +227,6 @@ class ExtensionDispatcher:
 
             num_steps_observed = 0
             while time.time() < end_time:
-
                 self._poll_playwright(DEFAULT_POLL_SLEEP_S)
                 if not is_quiet():
                     scroller.scroll()
@@ -214,9 +235,7 @@ class ExtensionDispatcher:
                     for step in act.steps[num_steps_observed:]:
                         model_response = step.model_output.awl_raw_program
                         newline = "\n"
-                        formatted_response = (
-                            f"\n{get_session_id_prefix()}{model_response.replace(newline, newline + '>> ')}"
-                        )
+                        formatted_response = f"\n{get_session_id_prefix()}{model_response.replace(newline, newline + '>> ')}"
                         _TRACE_LOGGER.info(formatted_response)
                     num_steps_observed = len(act.steps)
 
@@ -224,7 +243,9 @@ class ExtensionDispatcher:
                     assert watcher is not None
                     triggered = watcher.is_triggered()
                     if triggered:
-                        _TRACE_LOGGER.info(f"\n{get_session_id_prefix()}Terminating agent workflow")
+                        _TRACE_LOGGER.info(
+                            f"\n{get_session_id_prefix()}Terminating agent workflow"
+                        )
                         self.cancel_prompt(act)
 
                 if act.is_complete:
@@ -235,7 +256,9 @@ class ExtensionDispatcher:
                 self.cancel_prompt(act)
 
             file_path = self._run_info_compiler.compile(act)
-            _TRACE_LOGGER.info(f"\n{get_session_id_prefix()}** View your act run here: {file_path}\n")
+            _TRACE_LOGGER.info(
+                f"\n{get_session_id_prefix()}** View your act run here: {file_path}\n"
+            )
 
             result = act.result
             output: ActResult | ActError
@@ -253,7 +276,8 @@ class ExtensionDispatcher:
                 )
 
             else:
-                output = ActClientError(message="Unhandled act result", metadata=act.metadata)
-
+                output = ActClientError(
+                    message="Unhandled act result", metadata=act.metadata
+                )
 
             return output

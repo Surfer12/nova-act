@@ -44,7 +44,10 @@ class AuthError(NovaActError):
 
     def __init__(self, backend_info: BackendInfo):
         warning = create_warning_box(
-            ["Authentication failed. Please ensure you are using a key from:", f"{backend_info.keygen_uri}"]
+            [
+                "Authentication failed. Please ensure you are using a key from:",
+                f"{backend_info.keygen_uri}",
+            ]
         )
         super().__init__(warning)
 

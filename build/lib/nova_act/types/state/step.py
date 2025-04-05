@@ -44,12 +44,16 @@ class Step:
             image=input_data.get("screenshot", ""),
             prompt=input_data.get("prompt", ""),
             active_url=input_data.get("metadata", {}).get("activeURL", ""),
-            legacy_workflow_run_id=input_data.get("agentRunCreate", {}).get("workflowRunId", ""),
+            legacy_workflow_run_id=input_data.get("agentRunCreate", {}).get(
+                "workflowRunId", ""
+            ),
         )
 
         # Extract output data
         output_data = message.get("output", {})
-        model_output = ModelOutput(awl_raw_program=output_data.get("rawProgramBody", ""))
+        model_output = ModelOutput(
+            awl_raw_program=output_data.get("rawProgramBody", "")
+        )
 
         # Extract timing data
         observed_time = dt.fromtimestamp(time.time())

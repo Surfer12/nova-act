@@ -18,10 +18,10 @@ def setup_logging(log_level: str = "info"):
     numeric_level = getattr(logging, log_level.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError(f"Invalid log level: {log_level}")
-    
+
     logging.basicConfig(
         level=numeric_level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
 
@@ -35,15 +35,15 @@ def main():
     parser.add_argument("--test-mode", help="Run in test mode", action="store_true")
 
     args = parser.parse_args()
-    
+
     # Setup logging
     setup_logging(args.log_level)
     logger = logging.getLogger(__name__)
-    
+
     try:
         # Load configuration
         config = load_config(args.config)
-        
+
         logger.info(f"Starting Nova ACT with configuration from {args.config}")
         if args.debug:
             logger.debug("Debug mode enabled")
@@ -51,13 +51,13 @@ def main():
             logger.info("Optimization enabled")
         if args.test_mode:
             logger.info("Running in test mode")
-            
+
         # Here you would add your actual application logic
-        
+
     except Exception as e:
         logger.error(f"Error: {e}")
         sys.exit(1)
 
 
 if __name__ == "__main__":
-    main() 
+    main()

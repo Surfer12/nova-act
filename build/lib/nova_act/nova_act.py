@@ -24,14 +24,34 @@ from playwright.sync_api import Page, Playwright
 from nova_act.impl.backend import Backend, get_urls_for_backend
 from nova_act.impl.common import get_default_extension_path, get_extension_version
 from nova_act.impl.extension import DEFAULT_ENDPOINT_NAME, ExtensionDispatcher
-from nova_act.impl.inputs import validate_base_parameters, validate_length, validate_prompt, validate_timeout
+from nova_act.impl.inputs import (
+    validate_base_parameters,
+    validate_length,
+    validate_prompt,
+    validate_timeout,
+)
 from nova_act.impl.playwright import PlaywrightInstanceManager
 from nova_act.types.act_errors import ActError
 from nova_act.types.act_result import ActResult
-from nova_act.types.errors import AuthError, ClientNotStarted, StartFailed, StopFailed, ValidationFailed
+from nova_act.types.errors import (
+    AuthError,
+    ClientNotStarted,
+    StartFailed,
+    StopFailed,
+    ValidationFailed,
+)
 from nova_act.types.state.act import Act
-from nova_act.util.jsonschema import add_schema_to_prompt, populate_json_schema_response, validate_jsonschema_schema
-from nova_act.util.logging import get_session_id_prefix, make_trace_logger, set_logging_session, setup_logging
+from nova_act.util.jsonschema import (
+    add_schema_to_prompt,
+    populate_json_schema_response,
+    validate_jsonschema_schema,
+)
+from nova_act.util.logging import (
+    get_session_id_prefix,
+    make_trace_logger,
+    set_logging_session,
+    setup_logging,
+)
 
 DEFAULT_SCREEN_WIDTH = 1600
 DEFAULT_SCREEN_HEIGHT = 900
@@ -157,9 +177,15 @@ class NovaAct:
             # We were supplied an existing user_data_dir.
             if clone_user_data_dir:
                 # We want to make a copy so the original is unmodified.
-                self._session_user_data_dir = tempfile.mkdtemp(suffix="_nova_act_user_data_dir")
-                _LOGGER.debug(f"Copying {user_data_dir} to {self._session_user_data_dir=}")
-                shutil.copytree(user_data_dir, self._session_user_data_dir, dirs_exist_ok=True)
+                self._session_user_data_dir = tempfile.mkdtemp(
+                    suffix="_nova_act_user_data_dir"
+                )
+                _LOGGER.debug(
+                    f"Copying {user_data_dir} to {self._session_user_data_dir=}"
+                )
+                shutil.copytree(
+                    user_data_dir, self._session_user_data_dir, dirs_exist_ok=True
+                )
                 self._session_user_data_dir_is_temp = True
             else:
                 # We want to just use the original.
@@ -167,7 +193,9 @@ class NovaAct:
                 self._session_user_data_dir_is_temp = False
         else:
             # We weren't given an existing user_data_dir, just make a temp directory.
-            self._session_user_data_dir = tempfile.mkdtemp(suffix="_nova_act_user_data_dir")
+            self._session_user_data_dir = tempfile.mkdtemp(
+                suffix="_nova_act_user_data_dir"
+            )
             self._session_user_data_dir_is_temp = True
 
         _LOGGER.debug(f"{self._session_user_data_dir=}")
@@ -177,7 +205,9 @@ class NovaAct:
 
         self._logs_directory = logs_directory
 
-        _chrome_channel = cast(str, chrome_channel or os.environ.get("NOVA_ACT_CHROME_CHANNEL", "chrome"))
+        _chrome_channel = cast(
+            str, chrome_channel or os.environ.get("NOVA_ACT_CHROME_CHANNEL", "chrome")
+        )
         _headless = headless or bool(os.environ.get("NOVA_ACT_HEADLESS"))
 
         validate_base_parameters(
@@ -236,7 +266,10 @@ class NovaAct:
         self._dispatcher: ExtensionDispatcher | None = None
 
     def __del__(self) -> None:
-        if hasattr(self, "_session_user_data_dir_is_temp") and self._session_user_data_dir_is_temp:
+        if (
+            hasattr(self, "_session_user_data_dir_is_temp")
+            and self._session_user_data_dir_is_temp
+        ):
             _LOGGER.debug(f"Deleting {self._session_user_data_dir}")
             shutil.rmtree(self._session_user_data_dir)
 
@@ -245,7 +278,10 @@ class NovaAct:
         return self
 
     def __exit__(
-        self, exc_type: Type[BaseException] | None, exc_value: BaseException | None, traceback: BaseException | None
+        self,
+        exc_type: Type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: BaseException | None,
     ) -> None:
         self.stop()
 
@@ -271,7 +307,9 @@ class NovaAct:
         Note: the order of these pages might not reflect their tab order in the window if they have been moved
         """
         if not self.started:
-            raise ClientNotStarted("Run start() to start the client before accessing the Playwright Page.")
+            raise ClientNotStarted(
+                "Run start() to start the client before accessing the Playwright Page."
+            )
         return self._playwright.get_page(index)
 
     @property
@@ -281,23 +319,28 @@ class NovaAct:
         Note: the order of these pages might not reflect their tab order in the window if they have been moved
         """
         if not self.started:
-            raise ClientNotStarted("Run start() to start the client before accessing Playwright Pages.")
+            raise ClientNotStarted(
+                "Run start() to start the client before accessing Playwright Pages."
+            )
         return self._playwright.context.pages
 
     @property
     def dispatcher(self) -> ExtensionDispatcher:
         """Get an ExtensionDispatcher for actuation on the current page."""
         if not self.started:
-            raise ClientNotStarted("Client must be started before accessing the dispatcher.")
+            raise ClientNotStarted(
+                "Client must be started before accessing the dispatcher."
+            )
         assert self._dispatcher is not None
         return self._dispatcher
 
     def start(self) -> None:
         """Start the client."""
         if self.started:
-            _LOGGER.warning("Attention: Client is already started; to start over, run stop().")
+            _LOGGER.warning(
+                "Attention: Client is already started; to start over, run stop()."
+            )
             return
-
 
         try:
             session_id = str(uuid.uuid4())
@@ -313,7 +356,9 @@ class NovaAct:
                     logs_directory=self._logs_directory,
                 )
                 self._playwright._session_id = session_id
-                _TRACE_LOGGER.info(f"\nstart session {session_id} on {self._starting_page}\n")
+                _TRACE_LOGGER.info(
+                    f"\nstart session {session_id} on {self._starting_page}\n"
+                )
                 set_logging_session(session_id)
         except Exception as e:
             self.stop()
@@ -372,7 +417,9 @@ class NovaAct:
         ValidationFailed
         """
         if not self.started:
-            raise ClientNotStarted("Run start() to start the client before calling act().")
+            raise ClientNotStarted(
+                "Run start() to start the client before calling act()."
+            )
 
         if not self._playwright._session_id:
             raise ValueError("Missing Session ID")
