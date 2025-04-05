@@ -4,7 +4,7 @@ import json
 import os
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from nova_act.main import load_config, setup_logging
 
@@ -32,7 +32,7 @@ class TestMain(unittest.TestCase):
             os.unlink(temp_name)
 
     @patch("logging.basicConfig")
-    def test_setup_logging(self, mock_basic_config: patch) -> None:
+    def test_setup_logging(self, mock_basic_config: MagicMock) -> None:
         """Test setting up logging with different log levels."""
         # Test with debug level
         setup_logging("debug")

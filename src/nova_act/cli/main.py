@@ -4,16 +4,23 @@ import argparse
 import json
 import logging
 import sys
-from typing import Any, Dict
+from typing import Dict, TypedDict
 
 
-def load_config(config_file: str) -> Dict[str, Any]:
+class NovaActConfig(TypedDict):
+    """Type definition for Nova ACT configuration."""
+
+    environment: str
+    logging: Dict[str, str]
+
+
+def load_config(config_file: str) -> NovaActConfig:
     """Load configuration from a JSON file."""
     with open(config_file, "r") as f:
         return json.load(f)
 
 
-def setup_logging(log_level: str = "info"):
+def setup_logging(log_level: str = "info") -> None:
     """Configure logging based on the specified log level."""
     numeric_level = getattr(logging, log_level.upper(), None)
     if not isinstance(numeric_level, int):
@@ -25,7 +32,7 @@ def setup_logging(log_level: str = "info"):
     )
 
 
-def main():
+def main() -> None:
     """Run the Nova ACT application."""
     parser = argparse.ArgumentParser(description="Nova ACT")
     parser.add_argument("--config", help="Path to configuration file", required=True)
