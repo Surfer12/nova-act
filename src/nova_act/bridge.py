@@ -1,9 +1,10 @@
 import asyncio
 import json
 import uuid
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Set
 
 import websockets
+from websockets.server import WebSocketServerProtocol
 
 from nova_act.util.logging import setup_logging
 
@@ -13,26 +14,26 @@ _LOGGER = setup_logging(__name__)
 class NovaActBridge:
     """WebSocket bridge for Nova Act to communicate with frontend."""
 
-    def __init__(self, host: str = "localhost", port: int = 8081):
+    def __init__(self, host: str = "localhost", port: int = 8081) -> None:
         self.host = host
         self.port = port
-        self.server = None
-        self.clients = set()
-        self.fractal_config = None
+        self.server: Optional[websockets.server.WebSocketServer] = None
+        self.clients: Set[WebSocketServerProtocol] = set()
+        self.fractal_config: Optional[Dict[str, Any]] = None
 
-    async def start(self):
+    async def start(self) -> None:
         """Start the WebSocket server."""
         self.server = await websockets.serve(self._handle_client, self.host, self.port)
         _LOGGER.info(f"WebSocket server started on ws://{self.host}:{self.port}")
 
-    async def stop(self):
+    async def stop(self) -> None:
         """Stop the WebSocket server."""
         if self.server:
             self.server.close()
             await self.server.wait_closed()
             _LOGGER.info("WebSocket server stopped")
 
-    async def _handle_client(self, websocket, path):
+    async def _handle_client(self, websocket: WebSocketServerProtocol, path: str) -> None:
         """Handle new WebSocket client connections."""
         self.clients.add(websocket)
         try:
@@ -52,7 +53,7 @@ class NovaActBridge:
         finally:
             self.clients.remove(websocket)
 
-    async def broadcast(self, message_type: str, data: Dict[str, Any]):
+    async def broadcast(self, message_type: str, data: Dict[str, Any]) -> None:
         """Broadcast a message to all connected clients."""
         if not self.clients:
             return
@@ -63,14 +64,14 @@ class NovaActBridge:
         websockets.broadcast(self.clients, message_json)
         _LOGGER.debug(f"Broadcast message: {message}")
 
-    async def send_thought_update(self, thought_data: Dict[str, Any]):
+    async def send_thought_update(self, thought_data: Dict[str, Any]) -> None:
         """Send a thought update to connected clients."""
         # Transform thought data according to fractal config if available
         if self.fractal_config:
             thought_data = self._transform_thought_for_fractal(thought_data)
         await self.broadcast("thoughtUpdate", thought_data)
 
-    async def send_meta_intervention(self, intervention_data: Dict[str, Any]):
+    async def send_meta_intervention(self, intervention_data: Dict[str, Any]) -> None:
         """Send a meta-intervention update to connected clients."""
         await self.broadcast("metaIntervention", intervention_data)
 

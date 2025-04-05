@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Fix circular import - import relatively instead of absolute import
-# (from .nova_act instead of nova_act.nova_act)
+"""Nova Act - A Python SDK for Amazon Nova Act."""
+
+from nova_act.bridge import NovaActBridge
+from nova_act.nova_act import NovaAct
 from nova_act.types.act_errors import (
     ActAgentError,
     ActCanceledError,
@@ -36,15 +38,15 @@ from nova_act.types.errors import (
 )
 from nova_act.util.jsonschema import BOOL_SCHEMA
 
-from .nova_act import NovaAct
-
+__version__ = "0.1.0"
 __all__ = [
     "NovaAct",
+    "NovaActBridge",
+    "ActError",
     "ActAgentError",
     "ActCanceledError",
     "ActClientError",
     "ActDispatchError",
-    "ActError",
     "ActExceededMaxStepsError",
     "ActGuardrailsError",
     "ActInternalServerError",

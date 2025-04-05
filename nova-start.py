@@ -8,7 +8,8 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main() -> None:
+    """Test basic Nova Act functionality."""
     logger.info("Testing basic Nova Act functionality...")
 
     try:
