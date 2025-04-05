@@ -56,7 +56,7 @@ def aggregate(results: list[dict]) -> list[dict]:
     return sorted(results, key=sort_key)
 
 
-def main(
+async def main(
     caltrain_city: str = "Redwood City",
     bedrooms: int = 2,
     baths: int = 1,
@@ -69,11 +69,11 @@ def main(
         headless=headless,
         chrome_channel="chromium",
     )
-    main_nova.start()
-    main_nova.act(f"search for apartments in {caltrain_city}")
+    await main_nova.start()
+    await main_nova.act(f"search for apartments in {caltrain_city}")
 
     # Extract listing elements (each representing z₀²)
-    listings = main_nova.act(f"extract {min_apartments_to_find} apartment listings")
+    listings = await main_nova.act(f"extract {min_apartments_to_find} apartment listings")
 
     # For each listing, start parallel Nova Act sessions (recursive iterations)
     results = []
@@ -82,18 +82,19 @@ def main(
         detail_nova = NovaAct(
             starting_page=listing.url, headless=headless, chrome_channel="chromium"
         )
-        detail_nova.start()
+        await detail_nova.start()
         # Act on finding distance information (e.g., via clicking or reading a field)
-        detail_nova.act("extract distance from train station")
-        distance = detail_nova.act("get the distance value from span.distance")
+        await detail_nova.act("extract distance from train station")
+        distance = await detail_nova.act("get the distance value from span.distance")
         results.append({"apartment": listing.identifier, "distance": distance})
-        detail_nova.stop()
+        await detail_nova.stop()
 
     # Synthesize the results (z₂ iteration)
     integrated_result = aggregate(results)
     print("Final Result Set:", integrated_result)
-    main_nova.stop()
+    await main_nova.stop()
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    import asyncio
+    fire.Fire(lambda **kwargs: asyncio.run(main(**kwargs)))
