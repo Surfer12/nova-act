@@ -4,7 +4,7 @@ import argparse
 import json
 import logging
 import sys
-from typing import Dict, TypedDict
+from typing import Dict, TypedDict, Any
 
 
 class NovaActConfig(TypedDict):
@@ -12,6 +12,7 @@ class NovaActConfig(TypedDict):
 
     environment: str
     logging: Dict[str, str]
+    browser: Dict[str, Any]
 
 
 def load_config(config_file: str) -> NovaActConfig:
@@ -27,6 +28,18 @@ def load_config(config_file: str) -> NovaActConfig:
             raise ValueError("Config must have 'logging' field")
         if not isinstance(config["logging"], dict):
             raise ValueError("Config 'logging' field must be a dictionary")
+        if "browser" not in config:
+            raise ValueError("Config must have 'browser' field")
+        if not isinstance(config["browser"], dict):
+            raise ValueError("Config 'browser' field must be a dictionary")
+        
+        # Validate browser configuration
+        browser_config = config["browser"]
+        required_browser_fields = ["starting_page", "headless", "chrome_channel", "screen_width", "screen_height"]
+        for field in required_browser_fields:
+            if field not in browser_config:
+                raise ValueError(f"Browser config must have '{field}' field")
+        
         return config  # type: ignore[return-value]  # json.load returns Any
 
 
