@@ -15,11 +15,6 @@ class NovaAct:
         config_file: Optional[str] = None,
         config: Optional[NovaActConfig] = None,
         *,
-        starting_page: str = "https://www.google.com",
-        headless: bool = True,
-        chrome_channel: str = "chrome",
-        screen_width: int = 1920,
-        screen_height: int = 1080,
         user_data_dir: Optional[str] = None,
     ):
         """Initialize Nova Act.
@@ -27,11 +22,6 @@ class NovaAct:
         Args:
             config_file: Path to configuration file
             config: Optional pre-loaded configuration
-            starting_page: Initial URL to load
-            headless: Whether to run browser in headless mode
-            chrome_channel: Chrome channel to use (chrome, chromium, etc.)
-            screen_width: Browser window width
-            screen_height: Browser window height
             user_data_dir: Optional path to user data directory
         """
         if config_file and config:
@@ -42,17 +32,28 @@ class NovaAct:
         elif config:
             self.config = config
         else:
-            self.config = {"environment": "development", "logging": {"level": "info"}}
+            self.config = {
+                "environment": "development",
+                "logging": {"level": "info"},
+                "browser": {
+                    "starting_page": "https://www.google.com",
+                    "headless": True,
+                    "chrome_channel": "chrome",
+                    "screen_width": 1920,
+                    "screen_height": 1080,
+                }
+            }
 
         setup_logging(self.config["logging"]["level"])
         self.logger = logging.getLogger(__name__)
 
         # Browser configuration
-        self.starting_page = starting_page
-        self.headless = headless
-        self.chrome_channel = chrome_channel
-        self.screen_width = screen_width
-        self.screen_height = screen_height
+        browser_config = self.config["browser"]
+        self.starting_page = browser_config["starting_page"]
+        self.headless = browser_config["headless"]
+        self.chrome_channel = browser_config["chrome_channel"]
+        self.screen_width = browser_config["screen_width"]
+        self.screen_height = browser_config["screen_height"]
         self.user_data_dir = user_data_dir
         self._browser = None
 
