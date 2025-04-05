@@ -29,7 +29,7 @@ def load_config(config_file: str) -> NovaActConfig:
             raise ValueError("Config 'logging' field must be an object")
         return NovaActConfig(
             environment=str(config_data["environment"]),
-            logging={str(k): str(v) for k, v in config_data["logging"].items()}
+            logging={str(k): str(v) for k, v in config_data["logging"].items()},
         )
 
 
