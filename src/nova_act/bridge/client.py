@@ -12,7 +12,7 @@ class NovaBridgeClient:
     """Client for communicating with the Nova Bridge service."""
 
     def __init__(
-        self, base_url: str = "http://localhost:8080", ws_url: str = "ws://localhost:8080/ws"
+        self, base_url: str = "http://localhost:8081", ws_url: str = "ws://localhost:8081/ws"
     ):
         self.base_url = base_url.rstrip("/")
         self.ws_url = ws_url
