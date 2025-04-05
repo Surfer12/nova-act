@@ -4,10 +4,11 @@ Nova Act Demo Script
 This script demonstrates basic usage of the Nova Act browser automation tool.
 """
 
+import asyncio
 from nova_act import NovaAct
 
 
-def main() -> None:
+async def main() -> None:
     # Create a NovaAct instance
     nova = NovaAct(
         # Starting web page for the browser
@@ -23,17 +24,17 @@ def main() -> None:
     try:
         # Start the browser
         print("Starting Nova Act browser...")
-        nova.start()
+        await nova.start()
 
         # Perform a search action
         print("Performing search action...")
-        result = nova.act("Search for 'Nova Act browser automation'")
+        result = await nova.act("Search for 'Nova Act browser automation'")
 
         # Print the result
         print(f"\nAction result: {result}")
 
         # You can perform additional actions
-        # result2 = nova.act("Click on the first search result")
+        # result2 = await nova.act("Click on the first search result")
 
         # Keep the browser open for a while
         input("\nPress Enter to close the browser...")
@@ -44,9 +45,9 @@ def main() -> None:
     finally:
         # Always stop the client to clean up resources
         print("Stopping Nova Act browser...")
-        nova.stop()
+        await nova.stop()
         print("Done!")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

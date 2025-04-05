@@ -17,7 +17,17 @@ class NovaActConfig(TypedDict):
 def load_config(config_file: str) -> NovaActConfig:
     """Load configuration from a JSON file."""
     with open(config_file, "r") as f:
-        return json.load(f)
+        config = json.load(f)
+        # Validate the config has the required fields
+        if not isinstance(config, dict):
+            raise ValueError("Config must be a dictionary")
+        if "environment" not in config:
+            raise ValueError("Config must have 'environment' field")
+        if "logging" not in config:
+            raise ValueError("Config must have 'logging' field")
+        if not isinstance(config["logging"], dict):
+            raise ValueError("Config 'logging' field must be a dictionary")
+        return config  # type: ignore[return-value]  # json.load returns Any
 
 
 def setup_logging(log_level: str = "info") -> None:

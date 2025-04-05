@@ -295,7 +295,9 @@ class PlaywrightInstanceManager:
     def main_page(self) -> Page:
         """Get the main page."""
         if not self.started:
-            raise ClientNotStarted("Run start() to start the client before accessing the main page.")
+            raise ClientNotStarted(
+                "Run start() to start the client before accessing the main page."
+            )
         if self._page is None:
             raise PageNotFoundError("No page found in the browser context.")
         return self._page
