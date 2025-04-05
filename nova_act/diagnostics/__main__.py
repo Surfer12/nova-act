@@ -10,9 +10,7 @@ logger = logging.getLogger(__name__)
 def setup_logging(debug: bool = False):
     """Configure logging based on debug flag."""
     level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(
-        level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def check_environment():
@@ -60,25 +58,19 @@ def fix_configuration():
 def main():
     """Run diagnostics tools."""
     parser = argparse.ArgumentParser(description="Nova ACT Diagnostics")
-    parser.add_argument(
-        "--check-all", action="store_true", help="Run all diagnostic checks"
-    )
+    parser.add_argument("--check-all", action="store_true", help="Run all diagnostic checks")
     parser.add_argument("--fix-all", action="store_true", help="Fix all issues")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
 
     # Add specific check options
     parser.add_argument("--check-env", action="store_true", help="Check environment")
     parser.add_argument("--check-deps", action="store_true", help="Check dependencies")
-    parser.add_argument(
-        "--check-config", action="store_true", help="Check configuration"
-    )
+    parser.add_argument("--check-config", action="store_true", help="Check configuration")
 
     # Add specific fix options
     parser.add_argument("--fix-env", action="store_true", help="Fix environment issues")
     parser.add_argument("--fix-deps", action="store_true", help="Fix dependency issues")
-    parser.add_argument(
-        "--fix-config", action="store_true", help="Fix configuration issues"
-    )
+    parser.add_argument("--fix-config", action="store_true", help="Fix configuration issues")
 
     args = parser.parse_args()
 

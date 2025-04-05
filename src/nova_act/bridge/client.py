@@ -1,28 +1,29 @@
-import aiohttp
 import json
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
+import aiohttp
+
 from nova_act.util.logging import setup_logging
 
 _LOGGER = setup_logging(__name__)
 
+
 class NovaBridgeClient:
     """Client for communicating with the Nova Bridge service."""
-    
+
     def __init__(
-        self,
-        base_url: str = "http://localhost:8080",
-        ws_url: str = "ws://localhost:8080/ws"
+        self, base_url: str = "http://localhost:8080", ws_url: str = "ws://localhost:8080/ws"
     ):
         self.base_url = base_url.rstrip("/")
         self.ws_url = ws_url
         self.session: Optional[aiohttp.ClientSession] = None
         self.ws: Optional[aiohttp.ClientWebSocketResponse] = None
-        
+
     async def connect(self):
         """Initialize HTTP and WebSocket sessions."""
         if not self.session:
             self.session = aiohttp.ClientSession()
-            
+
     async def close(self):
         """Close HTTP and WebSocket sessions."""
         if self.ws:
@@ -31,7 +32,7 @@ class NovaBridgeClient:
         if self.session:
             await self.session.close()
             self.session = None
-            
+
     async def publish_thought(
         self,
         session_id: str,
@@ -40,12 +41,12 @@ class NovaBridgeClient:
         transformativeInput: str,
         emergentPattern: str,
         processingLevel: str,
-        iterationCount: int
+        iterationCount: int,
     ) -> Dict[str, Any]:
         """Publish a thought update to the bridge."""
         if not self.session:
             await self.connect()
-            
+
         thought_data = {
             "sessionId": session_id,
             "initialState": initialState,
@@ -53,13 +54,12 @@ class NovaBridgeClient:
             "transformativeInput": transformativeInput,
             "emergentPattern": emergentPattern,
             "processingLevel": processingLevel,
-            "iterationCount": iterationCount
+            "iterationCount": iterationCount,
         }
-        
+
         try:
             async with self.session.post(
-                f"{self.base_url}/api/thoughts",
-                json=thought_data
+                f"{self.base_url}/api/thoughts", json=thought_data
             ) as response:
                 if response.status == 200:
                     return await response.json()
@@ -69,31 +69,30 @@ class NovaBridgeClient:
         except Exception as e:
             _LOGGER.error(f"Error publishing thought: {e}")
             return {}
-            
+
     async def publish_intervention(
         self,
         session_id: str,
         type: str,
         content: str,
         targetThought: Optional[str] = None,
-        processingLevel: str = "mesoLevel"
+        processingLevel: str = "mesoLevel",
     ) -> Dict[str, Any]:
         """Publish an intervention to the bridge."""
         if not self.session:
             await self.connect()
-            
+
         intervention_data = {
             "sessionId": session_id,
             "type": type,
             "content": content,
             "targetThought": targetThought,
-            "processingLevel": processingLevel
+            "processingLevel": processingLevel,
         }
-        
+
         try:
             async with self.session.post(
-                f"{self.base_url}/api/interventions",
-                json=intervention_data
+                f"{self.base_url}/api/interventions", json=intervention_data
             ) as response:
                 if response.status == 200:
                     return await response.json()
@@ -103,16 +102,16 @@ class NovaBridgeClient:
         except Exception as e:
             _LOGGER.error(f"Error publishing intervention: {e}")
             return {}
-            
+
     async def connect_websocket(self, on_message):
         """Connect to the WebSocket endpoint and set up message handler."""
         if not self.session:
             await self.connect()
-            
+
         try:
             self.ws = await self.session.ws_connect(self.ws_url)
             _LOGGER.info("Connected to Nova Bridge WebSocket")
-            
+
             async for msg in self.ws:
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     try:
@@ -125,4 +124,4 @@ class NovaBridgeClient:
                     break
         except Exception as e:
             _LOGGER.error(f"WebSocket connection error: {e}")
-            self.ws = None 
+            self.ws = None

@@ -13,12 +13,12 @@
 # limitations under the License.
 from __future__ import annotations
 
+import asyncio
 import os
 import shutil
 import sys
 import tempfile
 import uuid
-import asyncio
 from typing import Any, Dict, Type, cast
 
 from playwright.sync_api import Page, Playwright
@@ -26,6 +26,7 @@ from playwright.sync_api import Page, Playwright
 # Add the parent directory to sys.path to make nova_act a proper package
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from nova_act.bridge import NovaActBridge
 from nova_act.impl.backend import Backend, get_urls_for_backend
 from nova_act.impl.common import get_default_extension_path, get_extension_version
 from nova_act.impl.extension import DEFAULT_ENDPOINT_NAME, ExtensionDispatcher
@@ -56,7 +57,6 @@ from nova_act.util.logging import (
     set_logging_session,
     setup_logging,
 )
-from nova_act.bridge import NovaActBridge
 
 DEFAULT_SCREEN_WIDTH = 1600
 DEFAULT_SCREEN_HEIGHT = 900
@@ -134,17 +134,17 @@ class NovaAct:
         user_data_dir: str, optional
             Path to Chrome data storage (cookies, cache, etc.).
             If not specified, will use a temp dir.
-            Note that if multiple NovaAct instances are used in the same process (e.g., via a 
-            ThreadPool), each one must have its own user_data_dir. In practice, this means either 
-            not specifying user_data_dir (so a fresh temp dir is used for each instance) or using 
+            Note that if multiple NovaAct instances are used in the same process (e.g., via a
+            ThreadPool), each one must have its own user_data_dir. In practice, this means either
+            not specifying user_data_dir (so a fresh temp dir is used for each instance) or using
             clone_user_data_dir=True.
         clone_user_data_dir: bool
-            If True (default), will make a copy of user_data_dir into a temp dir for each instance 
-            of NovaAct. This ensures the original is not modified and that each instance has its 
+            If True (default), will make a copy of user_data_dir into a temp dir for each instance
+            of NovaAct. This ensures the original is not modified and that each instance has its
             own user_data_dir.
             If user_data_dir is not specified, this flag has no effect.
         profile_directory: str
-            Directory for the Chrome user profile within user_data_dir. Only needed if using an 
+            Directory for the Chrome user profile within user_data_dir. Only needed if using an
             existing Chrome profile.
         extension_path : str, optional
             Path to the compiled Chrome extension for browser actuation
@@ -159,7 +159,7 @@ class NovaAct:
             Browser channel to use (e.g., "chromium", "chrome-beta", "msedge" etc.). Defaults to
             "chrome". Can also be specified via the `NOVA_ACT_CHROME_CHANNEL` environment variable.
         nova_act_api_key: str
-            API key for interacting with NovaAct. Will override the NOVA_ACT_API_KEY 
+            API key for interacting with NovaAct. Will override the NOVA_ACT_API_KEY
             environment variable
         playwright_instance: Playwright
             Add an existing Playwright instance for use
@@ -196,15 +196,9 @@ class NovaAct:
             # We were supplied an existing user_data_dir.
             if clone_user_data_dir:
                 # We want to make a copy so the original is unmodified.
-                self._session_user_data_dir = tempfile.mkdtemp(
-                    suffix="_nova_act_user_data_dir"
-                )
-                _LOGGER.debug(
-                    f"Copying {user_data_dir} to {self._session_user_data_dir=}"
-                )
-                shutil.copytree(
-                    user_data_dir, self._session_user_data_dir, dirs_exist_ok=True
-                )
+                self._session_user_data_dir = tempfile.mkdtemp(suffix="_nova_act_user_data_dir")
+                _LOGGER.debug(f"Copying {user_data_dir} to {self._session_user_data_dir=}")
+                shutil.copytree(user_data_dir, self._session_user_data_dir, dirs_exist_ok=True)
                 self._session_user_data_dir_is_temp = True
             else:
                 # We want to just use the original.
@@ -212,9 +206,7 @@ class NovaAct:
                 self._session_user_data_dir_is_temp = False
         else:
             # We weren't given an existing user_data_dir, just make a temp directory.
-            self._session_user_data_dir = tempfile.mkdtemp(
-                suffix="_nova_act_user_data_dir"
-            )
+            self._session_user_data_dir = tempfile.mkdtemp(suffix="_nova_act_user_data_dir")
             self._session_user_data_dir_is_temp = True
 
         _LOGGER.debug(f"{self._session_user_data_dir=}")
@@ -287,10 +279,7 @@ class NovaAct:
         self._bridge_task = None
 
     def __del__(self) -> None:
-        if (
-            hasattr(self, "_session_user_data_dir_is_temp")
-            and self._session_user_data_dir_is_temp
-        ):
+        if hasattr(self, "_session_user_data_dir_is_temp") and self._session_user_data_dir_is_temp:
             _LOGGER.debug(f"Deleting {self._session_user_data_dir}")
             shutil.rmtree(self._session_user_data_dir)
 
@@ -325,7 +314,7 @@ class NovaAct:
     def get_page(self, index: int = -1) -> Page:
         """Get a particular playwright page by index or the currently actuating page if index == -1.
 
-        Note: the order of these pages might not reflect their tab order in the window if they have 
+        Note: the order of these pages might not reflect their tab order in the window if they have
         been moved
         """
         if not self.started:
@@ -338,7 +327,7 @@ class NovaAct:
     def pages(self) -> list[Page]:
         """Get the current playwright pages.
 
-        Note: the order of these pages might not reflect their tab order in the window if they have 
+        Note: the order of these pages might not reflect their tab order in the window if they have
         been moved
         """
         if not self.started:
@@ -351,18 +340,14 @@ class NovaAct:
     def dispatcher(self) -> ExtensionDispatcher:
         """Get an ExtensionDispatcher for actuation on the current page."""
         if not self.started:
-            raise ClientNotStarted(
-                "Client must be started before accessing the dispatcher."
-            )
+            raise ClientNotStarted("Client must be started before accessing the dispatcher.")
         assert self._dispatcher is not None
         return self._dispatcher
 
     async def start(self) -> None:
         """Start the client and WebSocket bridge."""
         if self.started:
-            _LOGGER.warning(
-                "Attention: Client is already started; to start over, run stop()."
-            )
+            _LOGGER.warning("Attention: Client is already started; to start over, run stop().")
             return
 
         try:
@@ -379,9 +364,7 @@ class NovaAct:
                     logs_directory=self._logs_directory,
                 )
                 self._playwright._session_id = session_id
-                _TRACE_LOGGER.info(
-                    f"\nstart session {session_id} on {self._starting_page}\n"
-                )
+                _TRACE_LOGGER.info(f"\nstart session {session_id} on {self._starting_page}\n")
                 set_logging_session(session_id)
 
             if self._bridge:
@@ -428,9 +411,7 @@ class NovaAct:
     ) -> ActResult:
         """Actuate a natural language command and broadcast updates."""
         if not self.started:
-            raise ClientNotStarted(
-                "Run start() to start the client before calling act()."
-            )
+            raise ClientNotStarted("Run start() to start the client before calling act().")
 
         if not self._playwright._session_id:
             raise ValueError("Missing Session ID")
@@ -477,7 +458,7 @@ class NovaAct:
                 "metadata": response.metadata,
                 "processingLevel": response.processing_level,
                 "iterationCount": response.iteration_count,
-                "timestamp": asyncio.get_event_loop().time()
+                "timestamp": asyncio.get_event_loop().time(),
             }
             await self._bridge.send_thought_update(thought_data)
 

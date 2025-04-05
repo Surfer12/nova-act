@@ -1,7 +1,8 @@
-from nova_act import BOOL_SCHEMA, NovaAct
+from nova_act import NovaAct
+from nova_act.util.jsonschema import BOOL_SCHEMA
 
 
-def test_basic_functionality():
+def test_basic_functionality() -> None:
     """Test basic NovaAct functionality by performing a simple Google search."""
     # Create a NovaAct instance with the working configuration
     nova = NovaAct(
@@ -19,17 +20,13 @@ def test_basic_functionality():
 
         # First verify we're on Google
         result = nova.act("Are we on google.com?", schema=BOOL_SCHEMA)
-        assert result.matches_schema and result.parsed_response, (
-            "Should be on Google.com"
-        )
+        assert result.matches_schema and result.parsed_response, "Should be on Google.com"
 
         # Try a simple search
         nova.act("Search for 'Nova Act Amazon'")
 
         # Verify search results contain Amazon
-        result = nova.act(
-            "Do the search results contain links to Amazon?", schema=BOOL_SCHEMA
-        )
+        result = nova.act("Do the search results contain links to Amazon?", schema=BOOL_SCHEMA)
         assert result.matches_schema and result.parsed_response, (
             "Search results should contain Amazon links"
         )

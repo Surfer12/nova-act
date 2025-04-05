@@ -108,13 +108,9 @@ class ExtensionDispatcher:
 
         """
         cancel_prompt_message = {"type": CANCEL_PROMPT_TYPE}
-        encrypted_message = self._playwright_manager.encrypter.encrypt(
-            cancel_prompt_message
-        )
+        encrypted_message = self._playwright_manager.encrypter.encrypt(cancel_prompt_message)
         try:
-            self._playwright_manager.main_page.evaluate(
-                POST_MESSAGE_EXPRESSION, encrypted_message
-            )
+            self._playwright_manager.main_page.evaluate(POST_MESSAGE_EXPRESSION, encrypted_message)
         except PlaywrightError:
             if self._verbose_errors:
                 _LOGGER.error("Encountered PlaywrightError", exc_info=True)
@@ -163,14 +159,10 @@ class ExtensionDispatcher:
         if act.model_seed is not None:
             pending_action_message["modelSeed"] = str(act.model_seed)
 
-        encrypted_message = self._playwright_manager.encrypter.encrypt(
-            pending_action_message
-        )
+        encrypted_message = self._playwright_manager.encrypter.encrypt(pending_action_message)
 
         try:
-            self._playwright_manager.main_page.evaluate(
-                POST_MESSAGE_EXPRESSION, encrypted_message
-            )
+            self._playwright_manager.main_page.evaluate(POST_MESSAGE_EXPRESSION, encrypted_message)
         except PlaywrightError:
             if self._verbose_errors:
                 _LOGGER.error("Encountered PlaywrightError", exc_info=True)
@@ -234,7 +226,7 @@ class ExtensionDispatcher:
                     for step in act.steps[num_steps_observed:]:
                         model_response = step.model_output.awl_raw_program
                         newline = "\n"
-                        replacement = newline + '>> '
+                        replacement = newline + ">> "
                         replaced_response = model_response.replace(newline, replacement)
                         formatted_response = f"\n{get_session_id_prefix()}{replaced_response}"
                         _TRACE_LOGGER.info(formatted_response)
@@ -244,9 +236,7 @@ class ExtensionDispatcher:
                     assert watcher is not None
                     triggered = watcher.is_triggered()
                     if triggered:
-                        _TRACE_LOGGER.info(
-                            f"\n{get_session_id_prefix()}Terminating agent workflow"
-                        )
+                        _TRACE_LOGGER.info(f"\n{get_session_id_prefix()}Terminating agent workflow")
                         self.cancel_prompt(act)
 
                 if act.is_complete:
@@ -277,8 +267,6 @@ class ExtensionDispatcher:
                 )
 
             else:
-                output = ActClientError(
-                    message="Unhandled act result", metadata=act.metadata
-                )
+                output = ActClientError(message="Unhandled act result", metadata=act.metadata)
 
             return output

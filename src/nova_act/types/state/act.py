@@ -56,16 +56,12 @@ class Act:
 
     # generate act_id and start_time on construction; make immutable
     id: str = field(factory=lambda: str(uuid.uuid4()), on_setattr=frozen, init=False)
-    start_time: float = field(
-        factory=lambda: time.time(), on_setattr=frozen, init=False
-    )
+    start_time: float = field(factory=lambda: time.time(), on_setattr=frozen, init=False)
 
     # rest of fields are mutable
     end_time: float | None = field(factory=lambda: None, init=False)
     _steps: list[Step] = field(factory=list, init=False)
-    _result: ActSucceeded | ActCanceled | ActFailed | None = field(
-        factory=lambda: None, init=False
-    )
+    _result: ActSucceeded | ActCanceled | ActFailed | None = field(factory=lambda: None, init=False)
 
     acknowledged: bool = field(factory=lambda: False, init=False)
     is_complete: bool = field(factory=lambda: False, init=False)
