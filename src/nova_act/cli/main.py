@@ -48,6 +48,23 @@ def setup_logging(log_level: str = "info") -> None:
 
 def main() -> None:
     """Run the Nova ACT application."""
+    # Detect if we're running inside an asyncio event loop already
+    try:
+        import asyncio
+        try:
+            loop = asyncio.get_running_loop()
+            running_in_asyncio = True
+        except RuntimeError:
+            running_in_asyncio = False
+    except ImportError:
+        running_in_asyncio = False
+        
+    # If we're already in an asyncio loop, we can't use the sync Playwright API
+    if running_in_asyncio:
+        print("Error: nova-act.sh cannot be run inside an asyncio loop.")
+        print("Please use nova-act-sync.sh instead, which runs without asyncio.")
+        sys.exit(1)
+
     parser = argparse.ArgumentParser(description="Nova ACT")
     parser.add_argument("--config", help="Path to configuration file", required=True)
     parser.add_argument("--debug", help="Enable debug mode", action="store_true")
@@ -76,7 +93,7 @@ def main() -> None:
         # Import here to avoid circular imports
         try:
             from nova_act import NovaAct
-            import threading, time
+            import time
             
             # Get browser config from config.json
             browser_config = config.get("browser", {})
@@ -85,34 +102,24 @@ def main() -> None:
             
             logger.info(f"Launching browser with starting page: {starting_page}")
             
-            # NovaAct requires a dedicated thread due to Playwright Sync API limitations
+            # Initialize NovaAct
             nova = NovaAct(
                 starting_page=starting_page,
                 headless=headless,
             )
             
-            # We're using a thread to handle the synchronous start method
-            # without blocking async. We can't use async since Playwright sync API 
-            # doesn't work in an asyncio context
-            def launch_browser():
-                nova.start()  # This is sync, not async - changed from our previous attempt
-                
-            thread = threading.Thread(target=launch_browser)
-            thread.daemon = True
-            thread.start()
-            
-            # Give the browser time to start
-            time.sleep(2)
+            # Start the browser directly (this is synchronous)
+            nova.start()
             
             # Keep the browser open until user interrupts
             logger.info("Browser launched. Press Ctrl+C to exit.")
             try:
-                while thread.is_alive():
+                while True:
                     time.sleep(1)
             except KeyboardInterrupt:
                 logger.info("User interrupted. Closing browser...")
             finally:
-                # Clean up using synchronous method instead of async
+                # Clean up
                 nova.stop()
                 
         except ImportError as e:
