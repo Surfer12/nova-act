@@ -347,7 +347,7 @@ class NovaAct:
         return self._dispatcher
 
     def start(self) -> None:
-        """Start the client and WebSocket bridge."""
+        """Start the client and WebSocket bridge synchronously."""
         if self.started:
             _LOGGER.warning("Attention: Client is already started; to start over, run stop().")
             return
@@ -374,9 +374,39 @@ class NovaAct:
         except Exception as e:
             self.stop()
             raise StartFailed from e
+            
+    async def start_async(self) -> None:
+        """Start the client and WebSocket bridge asynchronously."""
+        if self.started:
+            _LOGGER.warning("Attention: Client is already started; to start over, run stop().")
+            return
+
+        try:
+            session_id = str(uuid.uuid4())
+            self._playwright.start()
+            if self._dispatcher is None:
+                self._dispatcher = ExtensionDispatcher(
+                    backend_info=self._backend_info,
+                    nova_act_api_key=self._nova_act_api_key,
+                    tty=self._tty,
+                    session_id=session_id,
+                    playwright_manager=self._playwright,
+                    extension_version=self._extension_version,
+                    logs_directory=self._logs_directory,
+                )
+                self._playwright._session_id = session_id
+                _TRACE_LOGGER.info(f"\nstart session {session_id} on {self._starting_page}\n")
+                set_logging_session(session_id)
+
+            # Start the bridge if it exists
+            if self._bridge:
+                self._bridge_task = asyncio.create_task(self._bridge.start())
+        except Exception as e:
+            await self.stop_async()
+            raise StartFailed from e
 
     def stop(self) -> None:
-        """Stop the client and WebSocket bridge."""
+        """Stop the client and WebSocket bridge synchronously."""
         try:
             if not self.started:
                 _LOGGER.warning("Attention: Client is already stopped.")
@@ -391,6 +421,28 @@ class NovaAct:
 
             # We don't handle the bridge in this synchronous version
             # to avoid async complications
+        except Exception as e:
+            raise StopFailed from e
+            
+    async def stop_async(self) -> None:
+        """Stop the client and WebSocket bridge asynchronously."""
+        try:
+            if not self.started:
+                _LOGGER.warning("Attention: Client is already stopped.")
+                return
+                
+            assert self._dispatcher is not None
+            self._dispatcher.cancel_prompt()
+            self._playwright.stop()
+            self._dispatcher = None
+            self._playwright._session_id = None
+            _TRACE_LOGGER.info("\nend session\n")
+            set_logging_session(None)
+
+            # Stop the bridge if it exists
+            if self._bridge and self._bridge_task:
+                await self._bridge.stop()
+                self._bridge_task = None
         except Exception as e:
             raise StopFailed from e
 
