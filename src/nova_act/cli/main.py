@@ -46,8 +46,8 @@ def setup_logging(log_level: str = "info") -> None:
     )
 
 
-def main() -> None:
-    """Run the Nova ACT application."""
+async def async_main() -> None:
+    """Run the Nova ACT application asynchronously."""
     parser = argparse.ArgumentParser(description="Nova ACT")
     parser.add_argument("--config", help="Path to configuration file", required=True)
     parser.add_argument("--debug", help="Enable debug mode", action="store_true")
@@ -76,6 +76,7 @@ def main() -> None:
         # Import here to avoid circular imports
         try:
             from nova_act import NovaAct
+            import asyncio
 
             # Get browser config from config.json
             browser_config = config.get("browser", {})
@@ -90,31 +91,28 @@ def main() -> None:
                 headless=headless,
             )
 
-            # Start the browser (this will open it)
-            nova.start()
+            # Start the browser (this will open it) - properly awaiting the async function
+            await nova.start()
 
             # Keep the browser open until user interrupts
             logger.info("Browser launched. Press Ctrl+C to exit.")
             try:
                 while True:
-                    import time
-
-                    time.sleep(1)
+                    await asyncio.sleep(1)
             except KeyboardInterrupt:
                 logger.info("User interrupted. Closing browser...")
             finally:
-                # Clean up
-                nova.stop()
+                # Clean up - properly awaiting the async function
+                await nova.stop()
 
         except ImportError as e:
             logger.error(f"Failed to import NovaAct: {e}")
             logger.info("Running in minimal mode without browser...")
 
             # Just sleep to keep the process alive for demo purposes
+            import time
             try:
                 while True:
-                    import time
-
                     time.sleep(1)
             except KeyboardInterrupt:
                 logger.info("User interrupted. Exiting...")
@@ -122,6 +120,12 @@ def main() -> None:
     except Exception as e:
         logger.error(f"Error: {e}")
         sys.exit(1)
+
+
+def main() -> None:
+    """Run the Nova ACT application by calling the async main function."""
+    import asyncio
+    asyncio.run(async_main())
 
 
 if __name__ == "__main__":
