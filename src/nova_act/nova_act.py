@@ -372,7 +372,7 @@ class NovaAct:
             if self._bridge:
                 self._bridge_task = asyncio.create_task(self._bridge.start())
         except Exception as e:
-            self.stop()
+            await self.stop()
             raise StartFailed from e
 
     async def stop(self) -> None:

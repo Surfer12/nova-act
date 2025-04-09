@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Import NovaAct from the package
 from nova_act import NovaAct
-import asyncio
+from asyncio import run as asyncio_run
 
 
 async def main() -> None:
@@ -38,4 +38,4 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio_run(main())
