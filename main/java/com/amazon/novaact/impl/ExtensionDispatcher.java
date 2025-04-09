@@ -61,6 +61,11 @@ public class ExtensionDispatcher {
     }
 
     private void handleExtensionMessage(JsonNode message) {
+        if (message == null) {
+            logger.error("Received null message");
+            return;
+        }
+
         String type = message.path("type").asText();
         String promptId = message.path("promptId").asText();
         
@@ -70,22 +75,30 @@ public class ExtensionDispatcher {
             return;
         }
 
-        switch (type) {
-            case "PROMPT_COMPLETE" -> {
-                ActResult result = parseActResult(message);
-                future.complete(result);
-                pendingPrompts.remove(promptId);
+        try {
+            switch (type) {
+                case "PROMPT_COMPLETE":
+                    ActResult result = parseActResult(message);
+                    future.complete(result);
+                    pendingPrompts.remove(promptId);
+                    break;
+                case "PROMPT_ERROR":
+                    String error = message.path("error").asText();
+                    future.completeExceptionally(new RuntimeException(error));
+                    pendingPrompts.remove(promptId);
+                    break;
+                case "PROMPT_PROGRESS":
+                    // Handle progress updates if needed
+                    logger.debug("Progress update for prompt {}: {}", promptId, message);
+                    break;
+                default:
+                    logger.warn("Unknown message type: {}", type);
+                    break;
             }
-            case "PROMPT_ERROR" -> {
-                String error = message.path("error").asText();
-                future.completeExceptionally(new RuntimeException(error));
-                pendingPrompts.remove(promptId);
-            }
-            case "PROMPT_PROGRESS" -> {
-                // Handle progress updates if needed
-                logger.debug("Progress update for prompt {}: {}", promptId, message);
-            }
-            default -> logger.warn("Unknown message type: {}", type);
+        } catch (Exception e) {
+            logger.error("Error handling message type {}: {}", type, e.getMessage(), e);
+            future.completeExceptionally(e);
+            pendingPrompts.remove(promptId);
         }
     }
 
@@ -93,6 +106,11 @@ public class ExtensionDispatcher {
         if (promptCancelled.get()) {
             return CompletableFuture.failedFuture(
                 new IllegalStateException("Cannot dispatch new prompt while previous is being cancelled"));
+        }
+
+        if (prompt == null || metadata == null) {
+            return CompletableFuture.failedFuture(
+                new IllegalArgumentException("Prompt and metadata must not be null"));
         }
 
         CompletableFuture<ActResult> future = new CompletableFuture<>();
@@ -117,11 +135,9 @@ public class ExtensionDispatcher {
 
             page.evaluate("window.postMessage(" + objectMapper.writeValueAsString(message) + ", '*')");
             
-            // Set up timeout if needed
-            // future.orTimeout(timeout, TimeUnit.MILLISECONDS);
-            
             return future;
         } catch (Exception e) {
+            logger.error("Failed to dispatch prompt: {}", e.getMessage(), e);
             pendingPrompts.remove(metadata.getActId());
             return CompletableFuture.failedFuture(e);
         }
@@ -134,11 +150,13 @@ public class ExtensionDispatcher {
                 page.evaluate("window.postMessage({type: 'CANCEL_PROMPT'}, '*')");
                 
                 // Complete all pending prompts with cancellation
-                pendingPrompts.forEach((id, future) -> 
-                    future.completeExceptionally(new RuntimeException("Prompt cancelled")));
+                pendingPrompts.forEach((id, future) -> {
+                    future.completeExceptionally(new RuntimeException("Prompt cancelled"));
+                    logger.debug("Cancelled prompt with ID: {}", id);
+                });
                 pendingPrompts.clear();
             } catch (Exception e) {
-                logger.error("Error cancelling prompt", e);
+                logger.error("Error cancelling prompt: {}", e.getMessage(), e);
             } finally {
                 promptCancelled.set(false);
             }

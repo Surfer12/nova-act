@@ -346,7 +346,7 @@ class NovaAct:
         assert self._dispatcher is not None
         return self._dispatcher
 
-    async def start(self) -> None:
+    def start(self) -> None:
         """Start the client and WebSocket bridge."""
         if self.started:
             _LOGGER.warning("Attention: Client is already started; to start over, run stop().")
@@ -369,13 +369,13 @@ class NovaAct:
                 _TRACE_LOGGER.info(f"\nstart session {session_id} on {self._starting_page}\n")
                 set_logging_session(session_id)
 
-            if self._bridge:
-                self._bridge_task = asyncio.create_task(self._bridge.start())
+            # We don't start the bridge in this synchronous version
+            # to avoid async complications
         except Exception as e:
-            await self.stop()
+            self.stop()
             raise StartFailed from e
 
-    async def stop(self) -> None:
+    def stop(self) -> None:
         """Stop the client and WebSocket bridge."""
         try:
             if not self.started:
@@ -389,13 +389,8 @@ class NovaAct:
             _TRACE_LOGGER.info("\nend session\n")
             set_logging_session(None)
 
-            if self._bridge and self._bridge_task:
-                await self._bridge.stop()
-                self._bridge_task.cancel()
-                try:
-                    await self._bridge_task
-                except asyncio.CancelledError:
-                    pass
+            # We don't handle the bridge in this synchronous version
+            # to avoid async complications
         except Exception as e:
             raise StopFailed from e
 

@@ -46,8 +46,8 @@ def setup_logging(log_level: str = "info") -> None:
     )
 
 
-async def async_main() -> None:
-    """Run the Nova ACT application asynchronously."""
+def main() -> None:
+    """Run the Nova ACT application."""
     parser = argparse.ArgumentParser(description="Nova ACT")
     parser.add_argument("--config", help="Path to configuration file", required=True)
     parser.add_argument("--debug", help="Enable debug mode", action="store_true")
@@ -76,56 +76,65 @@ async def async_main() -> None:
         # Import here to avoid circular imports
         try:
             from nova_act import NovaAct
-            import asyncio
-
+            import threading, time
+            
             # Get browser config from config.json
             browser_config = config.get("browser", {})
             starting_page = browser_config.get("starting_page", "https://www.google.com")
             headless = browser_config.get("headless", True)
-
+            
             logger.info(f"Launching browser with starting page: {starting_page}")
-
-            # Initialize and start NovaAct
+            
+            # NovaAct requires a dedicated thread due to Playwright Sync API limitations
             nova = NovaAct(
                 starting_page=starting_page,
                 headless=headless,
             )
-
-            # Start the browser (this will open it) - properly awaiting the async function
-            await nova.start()
-
+            
+            # We're using a thread to handle the synchronous start method
+            # without blocking async. We can't use async since Playwright sync API 
+            # doesn't work in an asyncio context
+            def launch_browser():
+                nova.start()  # This is sync, not async - changed from our previous attempt
+                
+            thread = threading.Thread(target=launch_browser)
+            thread.daemon = True
+            thread.start()
+            
+            # Give the browser time to start
+            time.sleep(2)
+            
             # Keep the browser open until user interrupts
             logger.info("Browser launched. Press Ctrl+C to exit.")
             try:
-                while True:
-                    await asyncio.sleep(1)
+                while thread.is_alive():
+                    time.sleep(1)
             except KeyboardInterrupt:
                 logger.info("User interrupted. Closing browser...")
             finally:
-                # Clean up - properly awaiting the async function
-                await nova.stop()
-
+                # Clean up using synchronous method instead of async
+                nova.stop()
+                
         except ImportError as e:
             logger.error(f"Failed to import NovaAct: {e}")
             logger.info("Running in minimal mode without browser...")
-
+            
             # Just sleep to keep the process alive for demo purposes
-            import time
             try:
                 while True:
+                    import time
                     time.sleep(1)
             except KeyboardInterrupt:
                 logger.info("User interrupted. Exiting...")
 
     except Exception as e:
+        import traceback
         logger.error(f"Error: {e}")
+        logger.error(traceback.format_exc())
         sys.exit(1)
 
 
-def main() -> None:
-    """Run the Nova ACT application by calling the async main function."""
-    import asyncio
-    asyncio.run(async_main())
+# Previous async main function and run removed
 
 
 if __name__ == "__main__":
