@@ -1,0 +1,1 @@
+/Users/ryandavidoates/yamls/target/debug/framework-mandel-strangeloop-influenced: /Users/ryandavidoates/yamls/src/cognitive_anthropic_manager.rs /Users/ryandavidoates/yamls/src/lib.rs /Users/ryandavidoates/yamls/src/main.rs
