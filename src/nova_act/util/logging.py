@@ -35,7 +35,27 @@ _LOG_ENV_VAR = "NOVA_ACT_LOG_LEVEL"
 
 
 def get_log_level():
-    return int(os.environ.get(_LOG_ENV_VAR, logging.INFO))
+    """Get the log level from environment variable or default to INFO.
+    
+    Returns:
+        int: The numeric log level. Defaults to logging.INFO if environment variable
+             is not set or contains an invalid value.
+    """
+    env_value = os.environ.get(_LOG_ENV_VAR)
+    if env_value is None:
+        return logging.INFO
+        
+    try:
+        # First try to convert directly to int
+        return int(env_value)
+    except ValueError:
+        # If that fails, try to match against logging level names
+        level = getattr(logging, env_value.upper(), None)
+        if isinstance(level, int):
+            return level
+            
+    # If all else fails, return INFO
+    return logging.INFO
 
 
 def is_quiet():

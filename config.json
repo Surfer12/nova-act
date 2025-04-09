@@ -1,0 +1,13 @@
+{
+	"environment": "production",
+	"logging": {
+		"level": "info"
+	},
+	"browser": {
+		"starting_page": "https://www.google.com",
+		"headless": true,
+		"chrome_channel": "chrome",
+		"screen_width": 1920,
+		"screen_height": 1080
+	}
+}
