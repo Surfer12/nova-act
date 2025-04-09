@@ -63,33 +63,83 @@ mvn clean install
 ```
 
 ### Quick Start
+
+Nova Act can be used in both synchronous and asynchronous modes, depending on your needs.
+
+#### Synchronous Mode
+
+Use this mode when you don't need the `act()` method and are just launching the browser.
+
 ```python
 from nova_act import NovaAct
 
 # Initialize NovaAct with starting page
 nova = NovaAct(starting_page="https://www.google.com")
 
-# Start the browser
+# Start the browser (synchronous)
 nova.start()
 
-# Execute natural language command
-result = nova.act("search for 'python programming'")
+# Keep the browser open...
+# (You cannot use act() in synchronous mode)
 
-# Close the browser
+# Close the browser (synchronous)
 nova.stop()
+```
+
+You can also use the command line:
+```bash
+# Start browser synchronously
+./nova-act-sync.sh
+```
+
+#### Asynchronous Mode
+
+Use this mode when you need to use the `act()` method or WebSocket bridge.
+
+```python
+import asyncio
+from nova_act import NovaAct
+
+async def main():
+    # Initialize NovaAct with starting page
+    nova = NovaAct(starting_page="https://www.google.com", enable_bridge=True)
+    
+    # Start the browser asynchronously
+    await nova.start_async()
+    
+    # Execute natural language command
+    result = await nova.act("search for 'python programming'")
+    
+    # Close the browser asynchronously
+    await nova.stop_async()
+
+# Run the async function
+asyncio.run(main())
+```
+
+You can also use the command line:
+```bash
+# Start browser asynchronously (with WebSocket bridge)
+./nova-act-async.sh
 ```
 
 ### More Detailed Examples
 
 1. Order a salad from Sweetgreen:
 ```python
+import asyncio
 from nova_act import NovaAct
 
 async def order_salad():
-    with NovaAct(
+    # Async context manager not supported, use try/finally
+    nova = NovaAct(
         starting_page="https://order.sweetgreen.com",
-        headless=False
-    ) as nova:
+        headless=False,
+        enable_bridge=True
+    )
+    
+    try:
+        await nova.start_async()
         await nova.act(
             "Click Menu at the top of the page. "
             "Click Delivery on the sidebar. "
@@ -97,20 +147,35 @@ async def order_salad():
             "Scroll down and click on 'Shroomami'. "
             "Click 'Add to Bag'."
         )
+    finally:
+        await nova.stop_async()
+
+# Run the async function
+asyncio.run(order_salad())
 ```
 
 2. Search for apartments near Caltrain:
 ```python
+import asyncio
 from nova_act import NovaAct
 
 async def find_apartments():
     nova = NovaAct(
         starting_page="https://www.realestate-website.com/",
-        headless=True
+        headless=True,
+        enable_bridge=True
     )
-    await nova.start()
-    await nova.act("search for apartments in Redwood City")
-    listings = await nova.act("extract 5 apartment listings")
+    
+    try:
+        await nova.start_async()
+        await nova.act("search for apartments in Redwood City")
+        listings = await nova.act("extract 5 apartment listings")
+        return listings
+    finally:
+        await nova.stop_async()
+
+# Run the async function
+asyncio.run(find_apartments())
 ```
 
 ### Troubleshooting
