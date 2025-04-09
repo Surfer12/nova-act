@@ -53,6 +53,14 @@ restart-server = { cmd = "pixi run clear-cache && pixi run run-backend" }
 # Terminal 1: pixi run run-frontend
 # Terminal 2: pixi run run-backend
 
+# Example commands
+example-basic = { cmd = "python example_nova_act.py" }
+example-coffee = { cmd = "python -m nova_act.samples.order_a_coffee_maker" }
+example-coffee-record = { cmd = "python -m nova_act.samples.order_a_coffee_maker --record_video" }
+example-apartments = { cmd = "python -m nova_act.samples.apartments_caltrain" }
+example-setup-chrome = { cmd = "python -m nova_act.samples.setup_chrome_user_data_dir --user_data_dir ./chrome_profile" }
+example-order-salad = { cmd = "python -m nova_act.samples.order_salad --user_data_dir ./chrome_profile" }
+
 [dependencies]
 python = ">=3.12.9,<3.13"
 pip = ">=25.0.1,<26"

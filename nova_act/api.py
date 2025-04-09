@@ -25,6 +25,7 @@ app.add_middleware(
 # Store NovaAct instances by session ID
 nova_act_instances: Dict[str, NovaAct] = {}
 
+
 class NovaActConfig(BaseModel):
     environment: str = "development"
     logging: Dict[str, str] = {"level": "info"}
@@ -36,10 +37,12 @@ class NovaActConfig(BaseModel):
         "screen_height": 1080,
     }
 
+
 class NovaActRequest(BaseModel):
     session_id: str
     action: str
     params: Optional[Dict[str, Any]] = None
+
 
 @app.post("/init")
 async def init_nova_act(config: NovaActConfig, session_id: str):
@@ -50,11 +53,12 @@ async def init_nova_act(config: NovaActConfig, session_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/act")
 async def act(request: NovaActRequest):
     if request.session_id not in nova_act_instances:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     try:
         instance = nova_act_instances[request.session_id]
         result = await instance.act(request.action, request.params or {})
@@ -62,11 +66,12 @@ async def act(request: NovaActRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/start")
 async def start(session_id: str):
     if session_id not in nova_act_instances:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     try:
         instance = nova_act_instances[session_id]
         await instance.start()
@@ -74,11 +79,12 @@ async def start(session_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/stop")
 async def stop(session_id: str):
     if session_id not in nova_act_instances:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     try:
         instance = nova_act_instances[session_id]
         await instance.stop()
@@ -86,6 +92,8 @@ async def stop(session_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

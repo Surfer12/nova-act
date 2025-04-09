@@ -48,8 +48,7 @@ class TestProjectStructure(unittest.TestCase):
 
         for directory in required_dirs:
             self.assertTrue(
-                os.path.isdir(directory),
-                f"Required directory {directory} does not exist"
+                os.path.isdir(directory), f"Required directory {directory} does not exist"
             )
 
     def test_core_dependencies_importable(self) -> None:

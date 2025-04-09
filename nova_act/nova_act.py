@@ -41,7 +41,7 @@ class NovaAct:
                     "chrome_channel": "chrome",
                     "screen_width": 1920,
                     "screen_height": 1080,
-                }
+                },
             }
 
         setup_logging(self.config["logging"]["level"])

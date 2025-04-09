@@ -22,10 +22,10 @@ class TestArchitecture(unittest.TestCase):
         """Test interaction between NovaAct and Bridge layer."""
         # Setup mock
         mock_bridge.return_value = AsyncMock()
-        
+
         # Create NovaAct instance
         nova = NovaAct(starting_page=self.test_url)
-        
+
         # Verify bridge client was created with correct parameters
         mock_bridge.assert_called_once()
         self.assertIsNotNone(nova._bridge_client)
@@ -35,10 +35,10 @@ class TestArchitecture(unittest.TestCase):
         """Test integration with Playwright browser automation."""
         # Setup mock
         mock_playwright.return_value = AsyncMock()
-        
+
         # Create NovaAct instance with mocked playwright
         nova = NovaAct(starting_page=self.test_url)
-        
+
         # Verify playwright integration
         self.assertIsNotNone(nova._browser)
 
@@ -47,48 +47,40 @@ class TestArchitecture(unittest.TestCase):
         """Test integration with backend service."""
         # Setup mock
         mock_backend.return_value = AsyncMock()
-        
+
         # Create NovaAct instance
         nova = NovaAct(starting_page=self.test_url)
-        
+
         # Verify backend service integration
         self.assertIsNotNone(nova._backend)
 
     async def test_act_result_schema_validation(self) -> None:
         """Test ActResult schema validation functionality."""
         # Create test schema
-        test_schema = {
-            "type": "object",
-            "properties": {
-                "test": {"type": "string"}
-            }
-        }
-        
+        test_schema = {"type": "object", "properties": {"test": {"type": "string"}}}
+
         # Create ActResult with valid data
-        valid_result = ActResult(
-            response='{"test": "value"}',
-            schema=test_schema
-        )
+        valid_result = ActResult(response='{"test": "value"}', schema=test_schema)
         self.assertTrue(valid_result.matches_schema)
-        
+
         # Create ActResult with invalid data
         invalid_result = ActResult(
             response='{"test": 123}',  # Should be string
-            schema=test_schema
+            schema=test_schema,
         )
         self.assertFalse(invalid_result.matches_schema)
 
     def test_error_handling(self) -> None:
         """Test error handling across architectural layers."""
         from nova_act.types.act_errors import ActError, BrowserError, ValidationError
-        
+
         # Test custom error hierarchy
         with self.assertRaises(ActError):
             raise ActError("Test error")
-            
+
         with self.assertRaises(BrowserError):
             raise BrowserError("Test browser error")
-            
+
         with self.assertRaises(ValidationError):
             raise ValidationError("Test validation error")
 
@@ -99,12 +91,12 @@ class TestArchitecture(unittest.TestCase):
         mock_encrypter.return_value = MagicMock()
         mock_encrypter.return_value.encrypt.return_value = b"encrypted"
         mock_encrypter.return_value.decrypt.return_value = b"decrypted"
-        
+
         # Test encryption
         encrypter = mock_encrypter()
         encrypted = encrypter.encrypt(b"test message")
         self.assertEqual(encrypted, b"encrypted")
-        
+
         # Test decryption
         decrypted = encrypter.decrypt(encrypted)
         self.assertEqual(decrypted, b"decrypted")

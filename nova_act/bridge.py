@@ -5,9 +5,10 @@ import websockets
 from websockets.server import WebSocketServerProtocol
 from websockets.legacy.server import serve
 
+
 class NovaActBridge:
     """Bridge for handling WebSocket connections in Nova Act."""
-    
+
     def __init__(self, host: str = "localhost", port: int = 8081):
         self.host = host
         self.port = port
@@ -19,7 +20,7 @@ class NovaActBridge:
         """Handle individual WebSocket client connections."""
         self.clients.add(websocket)
         self.logger.info(f"New client connected. Total clients: {len(self.clients)}")
-        
+
         try:
             async for message in websocket:
                 # Handle incoming messages
@@ -35,10 +36,7 @@ class NovaActBridge:
     async def start(self):
         """Start the WebSocket server."""
         self.server = await serve(
-            self.handle_client,
-            self.host,
-            self.port,
-            process_request=self.process_request
+            self.handle_client, self.host, self.port, process_request=self.process_request
         )
         self.logger.info(f"WebSocket server started on ws://{self.host}:{self.port}")
 
@@ -48,7 +46,7 @@ class NovaActBridge:
             self.server.close()
             await self.server.wait_closed()
             self.logger.info("WebSocket server stopped")
-            
+
     async def process_request(self, path, headers):
         """Custom request processor that's more lenient with headers."""
-        return None  # None means the connection is accepted 
+        return None  # None means the connection is accepted

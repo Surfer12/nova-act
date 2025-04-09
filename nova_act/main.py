@@ -32,14 +32,20 @@ def load_config(config_file: str) -> NovaActConfig:
             raise ValueError("Config must have 'browser' field")
         if not isinstance(config["browser"], dict):
             raise ValueError("Config 'browser' field must be a dictionary")
-        
+
         # Validate browser configuration
         browser_config = config["browser"]
-        required_browser_fields = ["starting_page", "headless", "chrome_channel", "screen_width", "screen_height"]
+        required_browser_fields = [
+            "starting_page",
+            "headless",
+            "chrome_channel",
+            "screen_width",
+            "screen_height",
+        ]
         for field in required_browser_fields:
             if field not in browser_config:
                 raise ValueError(f"Browser config must have '{field}' field")
-        
+
         return config  # type: ignore[return-value]  # json.load returns Any
 
 
