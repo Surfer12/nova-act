@@ -1,0 +1,36 @@
+# Repository Overview
+
+This repository contains two main projects:
+
+## 1. Nova Act
+A Python SDK for Amazon Nova Act, which is an early research preview of an SDK + model for building agents designed to reliably take actions in web browsers. The SDK enables developers to:
+- Break down complex workflows into smaller, reliable commands
+- Add more detail where needed
+- Call APIs
+- Intersperse direct browser manipulation
+- Interleave Python code for tests, breakpoints, asserts, or threadpooling
+
+For more details, see [nova-act/README.md](nova-act/README.md)
+
+## 2. YAML Tools and Mandelbrot Renderer
+A collection of tools including a Lua-based Mandelbrot Set renderer with features like:
+- Pure Lua implementation
+- Configurable rendering parameters
+- Simple ASCII output
+- Educational and experimental purposes
+
+For more details, see [yamls/README.md](yamls/README.md)
+
+## Repository Structure
+
+```
+.
+├── nova-act/          # Nova Act SDK project
+└── yamls/            # YAML tools and Lua renderer
+```
+
+## Getting Started
+
+Please refer to the individual project READMEs for specific setup and usage instructions:
+- Nova Act: [nova-act/README.md](nova-act/README.md)
+- YAML Tools: [yamls/README.md](yamls/README.md)

@@ -7,5 +7,7 @@
 			"path": "../yamls"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"codeQL.createQuery.qlPackLocation": "/Users/ryandavidoates/nova-act"
+	}
 }

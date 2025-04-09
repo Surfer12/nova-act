@@ -4,6 +4,90 @@ A Python SDK for Amazon Nova Act.
 
 Nova Act is an early research preview of an SDK + model for building agents designed to reliably take actions in web browsers. Building with the SDK enables developers to break down complex workflows into smaller, reliable, commands, add more detail where needed, call APIs, and intersperse direct browser manipulation. Developers can interleave Python code, whether it be tests, breakpoints, asserts, or threadpooling for parallelization. Read more about the announcement: https://labs.amazon.science/blog/nova-act.
 
+## Project Overview
+
+### Architecture
+
+Nova Act follows a client-server architecture with the following key components:
+
+1. **Core SDK (`nova_act.py`)**: The main interface that developers interact with, providing the NovaAct class
+2. **Bridge Layer (`bridge/`)**: Handles communication between the SDK and the browser automation components
+   - `client.py`: Client-side implementation
+   - `server.py`: Server-side implementation for browser control
+
+3. **Implementation Layer (`impl/`)**: Core functionality implementation
+   - `backend.py`: Backend service integration
+   - `playwright.py`: Browser automation using Playwright
+   - `protocol.py`: Communication protocol definitions
+   - `extension.py`: Browser extension functionality
+   - Other supporting modules for keyboard events, message encryption, etc.
+
+4. **Types (`types/`)**: Type definitions and error handling
+   - Custom error types
+   - Action metadata and results
+   - State management types
+
+5. **Utilities (`util/`)**: Helper functions and utilities
+   - JSON schema handling
+   - Logging configuration
+   - Terminal management
+
+6. **CLI Interface (`cli/`)**: Command-line interface implementation
+
+### Project Structure
+
+```
+nova-act/
+├── src/nova_act/           # Main package source
+│   ├── bridge/            # Client-server communication
+│   ├── cli/              # Command-line interface
+│   ├── impl/             # Core implementation
+│   ├── samples/          # Example implementations
+│   ├── types/            # Type definitions
+│   ├── util/             # Utility functions
+│   └── nova_act.py       # Main SDK interface
+├── tests/                # Test suite
+├── docs/                 # Documentation
+└── requirements.txt      # Dependencies
+```
+
+### Key Dependencies
+
+- **Core Dependencies**:
+  - `playwright==1.48.0`: Browser automation
+  - `pydantic>=2.10.6`: Data validation
+  - `websockets>=12.0`: WebSocket communication
+  - `cryptography`: Security features
+  - `pandas>=2.2.3`: Data handling
+  - `numpy>=1.26.4`: Numerical operations
+
+- **Development Dependencies**:
+  - `pytest>=8.0.0`: Testing framework
+  - `ruff>=0.0.292`: Linting
+  - `mypy>=1.5.1`: Type checking
+
+### Development Workflow
+
+1. **Setup Development Environment**:
+   ```bash
+   python -m pip install --editable '.[dev]'
+   ```
+
+2. **Code Quality**:
+   - Type checking with mypy
+   - Linting with ruff
+   - Tests with pytest
+
+3. **Building**:
+   ```bash
+   python -m build --wheel --no-isolation --outdir dist/ .
+   ```
+
+4. **Testing**:
+   ```bash
+   pytest tests/
+   ```
+
 
 ## Disclosures
 
@@ -453,3 +537,4 @@ Be sure to include the following in the email:
 Your feedback is valuable in ensuring a better experience for everyone.
 
 Thanks for experimenting with Nova Act!
+

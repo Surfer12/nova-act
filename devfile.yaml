@@ -1,0 +1,69 @@
+schemaVersion: 2.2.0
+metadata:
+  name: nova-act
+  version: 1.0.0
+  displayName: Nova Act Development Environment
+  description: Development environment for Nova Act Python SDK
+  tags:
+    - Python
+    - SDK
+    - Amazon Nova Act
+
+components:
+  - name: python
+    container:
+      image: python:3.12
+      memoryLimit: 2Gi
+      mountSources: true
+      endpoints:
+        - name: http
+          targetPort: 8000
+          exposure: public
+          protocol: http
+
+commands:
+  - id: 1-install-dependencies
+    exec:
+      component: python
+      commandLine: |
+        python -m pip install --upgrade pip
+        python -m pip install --editable '.[dev]'
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: build
+        isDefault: true
+
+  - id: 2-run-tests
+    exec:
+      component: python
+      commandLine: python -m pytest
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: test
+        isDefault: true
+
+  - id: 3-build-wheel
+    exec:
+      component: python
+      commandLine: python -m build --wheel --no-isolation --outdir dist/ .
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: build
+
+  - id: 4-lint
+    exec:
+      component: python
+      commandLine: |
+        python -m ruff check .
+        python -m mypy .
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: test
+
+  - id: 5-run-dev-server
+    exec:
+      component: python
+      commandLine: python start_server.py
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: run
