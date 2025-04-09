@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import base64
-import io
-import json
+from base64 import b64encode, b64decode
+from io import BytesIO
+from json import dumps, loads
 import os
 import re
 

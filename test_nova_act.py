@@ -1,10 +1,10 @@
-import pytest  # Assuming pytest is used for async tests
+from pytest import mark, fixture  # Assuming pytest is used for async tests
 
 from src.nova_act import ActResult, NovaAct
 from src.nova_act.util.jsonschema import BOOL_SCHEMA
 
 
-@pytest.mark.asyncio  # Decorator for async pytest functions
+@mark.asyncio  # Decorator for async pytest functions
 async def test_basic_functionality() -> None:
     """Test basic NovaAct functionality by performing a simple Google search."""
     # Create a NovaAct instance with the working configuration

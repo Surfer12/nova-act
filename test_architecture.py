@@ -1,7 +1,7 @@
 """Tests for verifying architectural components and their interactions."""
 
-import asyncio
-import unittest
+from asyncio import run as async_run
+from unittest import TestCase
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from nova_act.bridge.client import BridgeClient

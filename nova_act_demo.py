@@ -5,14 +5,14 @@ This script demonstrates basic usage of the Nova Act browser automation tool.
 """
 
 from nova_act import NovaAct
-import asyncio
-import logging
-import os
-import tempfile
+from asyncio import run as async_run
+from logging import getLogger
+from os import getenv
+from tempfile import TemporaryDirectory
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+basicConfig(level=logging.DEBUG)
+logger = getLogger(__name__)
 
 # Set environment variables for debugging
 os.environ["NOVA_ACT_LOG_LEVEL"] = str(logging.DEBUG)

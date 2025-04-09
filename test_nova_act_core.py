@@ -1,14 +1,14 @@
 """Tests for core NovaAct functionality."""
-import pytest
+from pytest import mark, fixture
 from nova_act.nova_act import NovaAct
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_nova_act_initialization():
     """Test NovaAct instance initialization."""
     nova = NovaAct()
     assert nova is not None
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_nova_act_start_stop():
     """Test NovaAct start and stop functionality."""
     nova = NovaAct(headless=True)
@@ -24,7 +24,7 @@ async def test_nova_act_start_stop():
     await nova.stop()
     assert not hasattr(nova, '_browser') or nova._browser is None, "Browser should be cleaned up after stop"
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_nova_act_configuration():
     """Test NovaAct configuration options."""
     nova = NovaAct(

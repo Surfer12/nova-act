@@ -1,8 +1,8 @@
 """Tests for NovaAct browser interactions."""
-import pytest
+from pytest import mark, fixture
 from nova_act.nova_act import NovaAct
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_browser_navigation():
     """Test basic browser navigation."""
     nova = NovaAct()
@@ -14,7 +14,7 @@ async def test_browser_navigation():
     finally:
         await nova.stop()
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_browser_interaction():
     """Test browser interaction capabilities."""
     nova = NovaAct(headless=True)
@@ -37,7 +37,7 @@ async def test_browser_interaction():
     finally:
         await nova.stop()
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_error_handling():
     """Test error handling in browser operations."""
     nova = NovaAct()

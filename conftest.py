@@ -1,8 +1,8 @@
 """Pytest configuration and fixtures."""
-import pytest
-from nova_act import NovaAct
+from pytest import fixture, mark
+from nova_act.nova_act import NovaAct
 
-@pytest.fixture
+@fixture
 async def nova_instance():
     """Provide a NovaAct instance for tests."""
     nova = NovaAct(headless=True)
@@ -10,7 +10,7 @@ async def nova_instance():
     yield nova
     await nova.stop()
 
-@pytest.fixture
+@fixture
 def sample_html():
     """Provide sample HTML content for testing."""
     return """

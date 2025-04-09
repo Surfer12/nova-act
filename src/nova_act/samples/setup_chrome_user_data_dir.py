@@ -19,9 +19,10 @@ Usage:
 python -m nova_act.samples.setup_chrome_user_data_dir --user_data_dir <directory>
 """
 
-import os
+from os import makedirs
+from asyncio import run as async_run
 
-import fire  # type: ignore
+from fire import Fire  # type: ignore
 
 from nova_act import NovaAct
 

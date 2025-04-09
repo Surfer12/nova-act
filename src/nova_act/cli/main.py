@@ -1,9 +1,9 @@
 """Main module for Nova ACT."""
 
-import argparse
-import json
-import logging
-import sys
+from argparse import ArgumentParser, Namespace
+from json import dumps, loads
+from logging import basicConfig, getLogger
+from sys import exit
 from typing import Dict, TypedDict
 
 
@@ -50,10 +50,10 @@ def main() -> None:
     """Run the Nova ACT application."""
     # Detect if we're running inside an asyncio event loop already
     try:
-        import asyncio
+        from asyncio import run as async_run
 
         try:
-            loop = asyncio.get_running_loop()
+            loop = get_running_loop()
             running_in_asyncio = True
         except RuntimeError:
             running_in_asyncio = False

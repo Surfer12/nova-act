@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import run as async_run
 import logging
 import os
 

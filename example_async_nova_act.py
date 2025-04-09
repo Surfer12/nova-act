@@ -4,9 +4,9 @@ Example script demonstrating how to use Nova Act's async API.
 This script properly handles the asynchronous nature of Nova Act.
 """
 
-import asyncio
-import argparse
-import sys
+from asyncio import run as async_run
+from argparse import ArgumentParser
+from sys import argv, exit
 
 
 async def main():
@@ -16,9 +16,9 @@ async def main():
         from nova_act import NovaAct
     except ImportError:
         print("Error: Nova Act is not installed or not available in the Python path.")
-        sys.exit(1)
+        exit(1)
 
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description="Example of using Nova Act's async API"
     )
     parser.add_argument("--headless", action="store_true", help="Run in headless mode")
@@ -64,4 +64,4 @@ async def main():
 
 if __name__ == "__main__":
     # Run the async main function
-    asyncio.run(main())
+    async_run(main())

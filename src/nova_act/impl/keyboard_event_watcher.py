@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import select
-import sys
-import threading
+from select import select
+from sys import stdin
+from threading import Thread, Event
 from typing import Optional
 
 from nova_act.util.terminal_manager import TerminalInputManager

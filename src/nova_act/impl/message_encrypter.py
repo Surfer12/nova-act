@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import json
-import os
-import secrets
+from json import dumps, loads
+from os import environ
+from secrets import token_bytes
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 

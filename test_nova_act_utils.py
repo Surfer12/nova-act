@@ -1,5 +1,5 @@
 """Tests for NovaAct utility functions."""
-import pytest
+from pytest import mark, fixture
 from nova_act.nova_act import NovaAct
 from nova_act.util.jsonschema import (
     BOOL_SCHEMA,
@@ -14,7 +14,7 @@ def test_schema_validation():
     assert not validate_schema("true", BOOL_SCHEMA)
     assert not validate_schema(1, BOOL_SCHEMA)
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_error_handling_timeout():
     """Test timeout handling."""
     nova = NovaAct(headless=True)

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # Import NovaAct from the package
 from nova_act import NovaAct
-import os
-import logging
-import asyncio
+from os import getenv
+from logging import getLogger
+from asyncio import run as async_run
 from dotenv import load_dotenv
 
 # Load environment variables from .env file

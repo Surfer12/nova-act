@@ -11,10 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import json
-import os
-import pathlib
-import sys
+from json import dumps, loads
+from os import path, environ
+from pathlib import Path
+from sys import platform
 from platform import system
 from typing import Any, Dict, List, Union
 
