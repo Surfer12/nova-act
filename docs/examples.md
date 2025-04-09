@@ -1,53 +1,42 @@
 # Examples
 
-Here are some examples of how to use Nova ACT in different scenarios.
+This document provides practical examples of using the Nova ACT Python SDK (`src/nova_act/`) for various automation scenarios.
 
-## Basic Web Navigation
+## SDK Support
+
+Nova ACT provides multiple SDK implementations:
+- **Python SDK** (`src/nova_act/`): These examples apply to this implementation
+- **Java SDK** (`main/java/com/amazon/novaact/`): See Java documentation for Java-specific examples
+- **Web Frontend** (`src/frontend/`): React TypeScript web application
+
+## Basic Usage
+
+### Simple Web Navigation
 
 ```python
 from nova_act import NovaAct
 
 with NovaAct() as nova:
-    # Search for something on Google
+    # Search on Google
     nova.act("search for python programming")
     
     # Click a specific link
     nova.act("click the link to python.org")
     
-    # Fill out a form
-    nova.act("fill out the search form with 'getting started' and submit")
+    # Navigate back
+    nova.act("go back to the previous page")
 ```
 
-## E-commerce Automation
-
-```python
-from nova_act import NovaAct
-
-def order_coffee_maker():
-    with NovaAct(starting_page="https://amazon.com") as nova:
-        # Search for a product
-        nova.act("search for a coffee maker")
-        
-        # Select a product
-        nova.act("select the first result")
-        
-        # Add to cart
-        nova.act("scroll down or up until you see 'add to cart' and then click 'add to cart'")
-
-if __name__ == "__main__":
-    order_coffee_maker()
-```
-
-## Form Filling
+### Form Interaction
 
 ```python
 from nova_act import NovaAct
 
 def fill_contact_form():
     with NovaAct(starting_page="https://example.com/contact") as nova:
-        # Fill out a complex form
+        # Fill out a form with structured data
         nova.act("""
-            Fill out the contact form with the following information:
+            Fill out the contact form with:
             - Name: John Doe
             - Email: john@example.com
             - Subject: General Inquiry
@@ -61,47 +50,157 @@ if __name__ == "__main__":
     fill_contact_form()
 ```
 
-## Using JSON Schema
+## Advanced Usage
 
-```python
-from nova_act import NovaAct, BOOL_SCHEMA
-
-def check_login_status():
-    with NovaAct() as nova:
-        # Check if we're logged in
-        result = nova.act(
-            "Are we logged in to the website?",
-            schema=BOOL_SCHEMA
-        )
-        
-        if result.matches_schema and result.parsed_response:
-            print("We are logged in!")
-        else:
-            print("We are not logged in.")
-
-if __name__ == "__main__":
-    check_login_status()
-```
-
-## Error Handling
+### E-commerce Automation
 
 ```python
 from nova_act import NovaAct
-from nova_act.types.errors import StartFailed, StopFailed
+from typing import Optional
 
-try:
-    nova = NovaAct()
-    nova.start()
+def order_product(product_name: str, quantity: int = 1) -> Optional[str]:
+    """
+    Order a product from Amazon.
     
-    try:
-        result = nova.act("perform some action")
-        print(f"Action completed: {result}")
-    except Exception as e:
-        print(f"Error during action: {e}")
-    finally:
-        nova.stop()
-except StartFailed as e:
-    print(f"Failed to start Nova ACT: {e}")
-except StopFailed as e:
-    print(f"Failed to stop Nova ACT: {e}")
-``` 
+    Args:
+        product_name: Name of the product to order
+        quantity: Number of items to order
+        
+    Returns:
+        Order confirmation number if successful, None otherwise
+    """
+    with NovaAct(
+        starting_page="https://amazon.com",
+        headless=True  # Run in headless mode for production
+    ) as nova:
+        try:
+            # Search for product
+            nova.act(f"search for {product_name}")
+            
+            # Select product
+            nova.act("select the first result")
+            
+            # Set quantity
+            if quantity > 1:
+                nova.act(f"set quantity to {quantity}")
+            
+            # Add to cart
+            nova.act("click add to cart")
+            
+            # Proceed to checkout
+            nova.act("proceed to checkout")
+            
+            # Get order confirmation
+            result = nova.act("what is the order confirmation number?")
+            return result.response
+            
+        except Exception as e:
+            print(f"Error during order process: {e}")
+            return None
+
+if __name__ == "__main__":
+    confirmation = order_product("coffee maker", quantity=2)
+    if confirmation:
+        print(f"Order placed successfully! Confirmation: {confirmation}")
+```
+
+### Data Scraping with Schema Validation
+
+```python
+from nova_act import NovaAct
+from typing import List, Dict
+import json
+
+def scrape_product_details(url: str) -> List[Dict]:
+    """
+    Scrape product details from an e-commerce page.
+    
+    Args:
+        url: URL of the product page
+        
+    Returns:
+        List of product details
+    """
+    schema = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "price": {"type": "number"},
+                "description": {"type": "string"},
+                "rating": {"type": "number"},
+                "reviews": {"type": "integer"}
+            },
+            "required": ["name", "price"]
+        }
+    }
+    
+    with NovaAct(starting_page=url) as nova:
+        result = nova.act(
+            "extract all product details including name, price, description, rating, and number of reviews",
+            schema=schema
+        )
+        
+        if result.matches_schema:
+            return result.parsed_response
+        else:
+            print("Failed to validate response against schema")
+            return []
+
+if __name__ == "__main__":
+    products = scrape_product_details("https://example.com/products")
+    print(json.dumps(products, indent=2))
+```
+
+### Error Handling and Recovery
+
+```python
+from nova_act import NovaAct
+from nova_act.types.errors import StartFailed, StopFailed, ActFailed
+import time
+
+def robust_automation(max_retries: int = 3):
+    """
+    Perform automation with retry logic and error handling.
+    
+    Args:
+        max_retries: Maximum number of retry attempts
+    """
+    for attempt in range(max_retries):
+        try:
+            with NovaAct() as nova:
+                # Perform actions
+                nova.act("search for python programming")
+                nova.act("click the first result")
+                
+                # Validate the result
+                result = nova.act("is this a python programming website?")
+                if not result.response.lower().startswith("yes"):
+                    raise ActFailed("Wrong website loaded")
+                
+                return  # Success, exit the function
+                
+        except (StartFailed, StopFailed, ActFailed) as e:
+            print(f"Attempt {attempt + 1} failed: {e}")
+            if attempt < max_retries - 1:
+                print("Retrying after 5 seconds...")
+                time.sleep(5)
+            else:
+                print("Max retries reached. Giving up.")
+                raise
+
+if __name__ == "__main__":
+    robust_automation()
+```
+
+## Best Practices
+
+1. **Use Context Manager**: Always use the `with` statement for proper resource management
+2. **Handle Errors**: Implement appropriate error handling and recovery mechanisms
+3. **Validate Responses**: Use schema validation for structured data extraction
+4. **Add Timeouts**: Set reasonable timeouts for long-running actions
+5. **Log Actions**: Implement logging for debugging and monitoring
+6. **Clean Up**: Ensure proper cleanup of resources in all scenarios
+
+For more examples and use cases, check out our [GitHub repository](https://github.com/your-org/nova-act). 

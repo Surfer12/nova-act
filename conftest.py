@@ -1,6 +1,6 @@
 """Pytest configuration and fixtures."""
 import pytest
-from nova_act.nova_act import NovaAct
+from nova_act import NovaAct
 
 @pytest.fixture
 async def nova_instance():

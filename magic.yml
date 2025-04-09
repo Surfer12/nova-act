@@ -1,6 +1,10 @@
 version: 1.0
 
 tasks:
+  install-requirements:
+    description: Install Python requirements from requirements.txt
+    command: pip install -r requirements.txt
+
   nova-act:
     description: Run nova_act in standard mode
     command: pixi run python -m nova_act.cli.main --config config.json
