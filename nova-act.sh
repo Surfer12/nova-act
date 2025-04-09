@@ -1,2 +1,17 @@
 #!/bin/bash
-pixi run python -m nova_act.cli.main --config config.json "$@"
+set -euo pipefail
+
+# Check if pixi is installed
+if ! command -v pixi &>/dev/null; then
+    echo "Error: pixi is not installed. Please install pixi first."
+    exit 1
+fi
+
+# Check if config file exists
+if [ ! -f "config.json" ]; then
+    echo "Error: config.json not found"
+    exit 1
+fi
+
+# Run nova-act with pixi
+exec pixi run python -m nova_act.cli.main --config config.json "$@"

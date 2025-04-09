@@ -1,11 +1,12 @@
 """Core NovaAct implementation module."""
 
+
 class NovaAct:
     """Core NovaAct class for browser automation."""
-    
+
     def __init__(self, headless: bool = False):
         """Initialize NovaAct instance.
-        
+
         Args:
             headless: Whether to run browser in headless mode
         """

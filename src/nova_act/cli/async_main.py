@@ -1,6 +1,11 @@
 """Asynchronous main module for Nova ACT."""
 
-from argparse import ArgumentParser
+import argparse
+import asyncio
+import json
+import logging
+import sys
+import traceback
 from asyncio import run as async_run, sleep
 from json import dumps, loads
 from logging import getLogger, basicConfig
@@ -126,8 +131,6 @@ async def async_main() -> None:
                 logger.info("User interrupted. Exiting...")
 
     except Exception as e:
-        import traceback
-
         logger.error(f"Error: {e}")
         logger.error(traceback.format_exc())
         sys.exit(1)

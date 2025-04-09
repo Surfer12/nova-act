@@ -1,10 +1,9 @@
 """Tests for NovaAct utility functions."""
+
 from pytest import mark, fixture
 from nova_act.nova_act import NovaAct
-from nova_act.util.jsonschema import (
-    BOOL_SCHEMA,
-    validate_schema
-)
+from nova_act.util.jsonschema import BOOL_SCHEMA, validate_schema
+
 
 def test_schema_validation():
     """Test JSON schema validation."""
@@ -14,6 +13,7 @@ def test_schema_validation():
     assert not validate_schema("true", BOOL_SCHEMA)
     assert not validate_schema(1, BOOL_SCHEMA)
 
+
 @mark.asyncio
 async def test_error_handling_timeout():
     """Test timeout handling."""
@@ -22,9 +22,6 @@ async def test_error_handling_timeout():
     try:
         with pytest.raises(Exception):
             # Set a very short timeout to force error
-            await nova.act(
-                "Find an element that doesn't exist",
-                timeout=0.1
-            )
+            await nova.act("Find an element that doesn't exist", timeout=0.1)
     finally:
         await nova.stop()

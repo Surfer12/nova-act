@@ -20,3 +20,7 @@ tasks:
   nova-act-demo:
     description: Run the nova_act demo script
     command: pixi run python nova_act_demo.py
+
+  apartments-caltrain:
+    description: Run the apartments Caltrain search sample
+    command: pixi run python -m nova_act.samples.apartments_caltrain

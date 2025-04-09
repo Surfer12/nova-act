@@ -1,9 +1,13 @@
 """Main module for Nova ACT."""
 
-from argparse import ArgumentParser, Namespace
+import argparse
+import json
+import logging
+import sys
+import time
+import traceback
+from asyncio import get_running_loop
 from json import dumps, loads
-from logging import basicConfig, getLogger
-from sys import exit
 from typing import Dict, TypedDict
 
 
@@ -18,7 +22,7 @@ class NovaActConfig(TypedDict, total=False):
 def load_config(config_file: str) -> NovaActConfig:
     """Load configuration from a JSON file."""
     with open(config_file, "r") as f:
-        config_data = json.load(f)
+        config_data = loads(f.read())
         # Validate the required fields
         if not isinstance(config_data, dict):
             raise ValueError("Config must be a JSON object")

@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from json import dumps, loads
-from os import environ
-from secrets import token_bytes
+from os import environ, urandom
+import json
+import os
+import secrets
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 

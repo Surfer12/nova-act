@@ -1,77 +1,45 @@
 #!/usr/bin/env python
-# Import NovaAct from the package
-from nova_act import NovaAct
-from os import getenv
-from logging import getLogger
-from asyncio import run as async_run
-from dotenv import load_dotenv
+import asyncio
+import logging
+import os
+import sys
 
-# Load environment variables from .env file
-load_dotenv()
+# Add src to the path for imports
+sys.path.insert(0, os.path.dirname(__file__))
+
+from nova_act.core import NovaAct  # Import from the core module
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
+# Simple example of using NovaAct with a minimal implementation
 async def main():
-    """Main async function to handle NovaAct operations"""
+    """Simple example using the core NovaAct class"""
     try:
-        # Check for API key
-        api_key = os.getenv("NOVA_ACT_API_KEY")
-        if not api_key:
-            raise ValueError(
-                "NOVA_ACT_API_KEY environment variable is not set. Please set it in your .env file."
-            )
-        logger.debug(f"Using API key: {api_key[:4]}...{api_key[-4:]}")
-
-        # Print environment variables for debugging
-        logger.debug("Environment variables:")
-        for key, value in os.environ.items():
-            if key.startswith("NOVA_ACT_"):
-                logger.debug(f"{key}: {value}")
-
-        # Create a NovaAct instance
-        nova = NovaAct(
-            starting_page="https://www.google.com",
-            headless=True,
-            chrome_channel="chromium",
-            screen_width=1600,
-            screen_height=900,
-            user_data_dir=None,
-        )
-        logger.debug("NovaAct instance created successfully")
-
-        try:
-            # Start the client (sync operation)
-            logger.debug("Starting NovaAct client...")
-            nova.start()  # This is a sync operation
-            logger.debug("NovaAct client started successfully")
-
-            # Perform an action (async operation)
-            logger.debug("Performing action...")
-            result = await nova.act(
-                "Search for 'Python programming language'"
-            )  # This is an async operation
-            logger.debug(f"Action completed with result: {result}")
-            print(f"Result: {result}")
-
-        finally:
-            # Make sure to stop the client to clean up resources (sync operation)
-            if nova.started:
-                logger.debug("Stopping NovaAct client...")
-                nova.stop()  # This is a sync operation
-                logger.debug("NovaAct client stopped successfully")
-
+        logger.info("Creating NovaAct instance...")
+        nova = NovaAct(headless=True)
+        logger.info("NovaAct instance created successfully")
+        
+        # Start the browser
+        logger.info("Starting browser...")
+        await nova.start()
+        logger.info("Browser started successfully")
+        
+        # Wait a moment (simulating browser actions)
+        logger.info("Simulating browser actions...")
+        await asyncio.sleep(1)
+        
+        # Stop the browser 
+        logger.info("Stopping browser...")
+        await nova.stop()
+        logger.info("Browser stopped successfully")
+        
+        logger.info("Example completed successfully!")
+        
     except Exception as e:
-        logger.error(f"Error occurred: {str(e)}", exc_info=True)
+        logger.error(f"Error: {str(e)}")
         raise
-
-
+        
 if __name__ == "__main__":
-    try:
-        # Run the async main function
-        asyncio.run(main())
-    except Exception as e:
-        logger.error(f"Main execution failed: {str(e)}", exc_info=True)
-        raise
+    asyncio.run(main())

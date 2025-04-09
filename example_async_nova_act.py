@@ -18,9 +18,7 @@ async def main():
         print("Error: Nova Act is not installed or not available in the Python path.")
         exit(1)
 
-    parser = ArgumentParser(
-        description="Example of using Nova Act's async API"
-    )
+    parser = ArgumentParser(description="Example of using Nova Act's async API")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode")
     parser.add_argument("--url", default="https://www.google.com", help="Starting URL")
     args = parser.parse_args()

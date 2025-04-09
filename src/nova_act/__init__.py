@@ -15,6 +15,7 @@
 """Nova Act - A Python SDK for Amazon Nova Act."""
 
 from nova_act.bridge import NovaActBridge
+from nova_act.cli.main import load_config, setup_logging
 from nova_act.nova_act import NovaAct
 from nova_act.types.act_errors import (
     ActAgentError,
@@ -59,4 +60,6 @@ __all__ = [
     "StopFailed",
     "ValidationFailed",
     "BOOL_SCHEMA",
+    "load_config",
+    "setup_logging",
 ]

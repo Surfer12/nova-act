@@ -20,7 +20,7 @@ async def main():
     try:
         logger.info("Starting Nova Act WebSocket server...")
         await bridge.start()
-        logger.info(f"Server running on ws://localhost:8081")
+        logger.info("Server running on ws://localhost:8081")
 
         # Keep the server running
         await asyncio.Future()  # run forever

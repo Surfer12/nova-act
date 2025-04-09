@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Install package in development mode
 pip install -e .
@@ -13,7 +14,3 @@ pytest \
     --cov-report=term-missing \
     --cov-report=xml \
     tests/
-
-# Print location of coverage reports
-echo "Coverage HTML report generated in htmlcov/index.html"
-echo "Coverage XML report generated in coverage.xml"

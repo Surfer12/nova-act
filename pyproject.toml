@@ -10,37 +10,11 @@ requires-python = ">=3.8"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-cov", "pytest-asyncio"]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-asyncio"
+]
 
 [tool.hatch.build]
 packages = ["src"]
-
-[tool.hatch.envs.default]
-dependencies = [
-  "pytest",
-  "pytest-cov",
-  "pytest-asyncio",
-]
-[tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-addopts = "-v --cov=nova_act --cov-report=html --cov-report=term-missing"
-
-[tool.coverage.run]
-source = ["nova_act"]
-omit = ["tests/*", "*/test_*.py"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "pass",
-]

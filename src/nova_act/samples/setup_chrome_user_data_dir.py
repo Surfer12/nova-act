@@ -37,8 +37,8 @@ def main(user_data_dir):
     ):
         input("Log into your websites, then press enter...")
 
-    print(f"User data dir saved to {user_data_dir=}")
+    print(f"User data dir saved to {user_data_dir}")
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    Fire(main)

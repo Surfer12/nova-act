@@ -1,6 +1,8 @@
 """Pytest configuration and fixtures."""
+
 from pytest import fixture, mark
 from nova_act.nova_act import NovaAct
+
 
 @fixture
 async def nova_instance():
@@ -9,6 +11,7 @@ async def nova_instance():
     await nova.start()
     yield nova
     await nova.stop()
+
 
 @fixture
 def sample_html():

@@ -1,9 +1,8 @@
-"""Nova ACT package initialization."""
+"""Nova ACT initialization."""
 
-from .core import NovaAct
-from .bridge import NovaActBridge as NovaActBridge
+from .bridge import NovaActBridge
+from .nova_act import NovaAct
 
-__all__ = [
-    "NovaAct",
-    "NovaActBridge",
-]
+__version__ = "0.1.0"
+
+__all__ = ['NovaActBridge', 'NovaAct', '__version__']

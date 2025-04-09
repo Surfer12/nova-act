@@ -1,5 +1,3 @@
-"""Utility functions package."""
+"""Utilities package for NovaAct."""
 
-from .logging import setup_logging
-
-__all__ = ["setup_logging"]
+__all__ = []

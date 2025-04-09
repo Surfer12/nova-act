@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from dataclasses import dataclass
+import dataclasses
+from dataclasses import field
 
 from nova_act.types.act_metadata import ActMetadata
 from nova_act.types.errors import NovaActError
@@ -43,7 +44,7 @@ Base class for all Errors Occurring during act()
 @dataclasses.dataclass(frozen=True, repr=False)
 class ActError(NovaActError):
     metadata: ActMetadata
-    message: str = dataclasses.field(init=False)
+    message: str = field(init=False)
     _DEFAULT_MESSAGE = "An error occurred during act()"
 
     def __init__(self, *, metadata: ActMetadata, message: str | None = None):

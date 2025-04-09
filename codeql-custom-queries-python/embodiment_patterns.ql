@@ -16,20 +16,25 @@ import python
  */
 predicate implementsAbstractInterface(Class c) {
   // Class inherits from an ABC or interface
-  exists(ClassExpr baseClass |
+  exists(Expr baseClass |
     baseClass = c.getABase() and
     (
       // Either inherits from ABC
       exists(Name name |
-        name = baseClass.(Name) and
+        name = baseClass and
         name.getId() = "ABC"
       ) or
-      // Or has abstract methods
-      exists(Function method |
-        method.getScope() = baseClass.(ClassExpr).getDefinedClass() and
-        method.getName().matches("%abstract%")
+      // Or inherits from a class with abstract in the name
+      exists(Name name |
+        name = baseClass and
+        name.getId().matches("%Abstract%")
       )
     )
+  ) or
+  // Or has a method with "abstract" in its name suggesting it implements an abstract interface
+  exists(Function method |
+    method.getScope() = c and
+    method.getName().matches("%abstract%")
   )
 }
 

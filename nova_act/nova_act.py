@@ -1,22 +1,24 @@
-"""Main NovaAct implementation module."""
+"""Nova ACT main module."""
+
+from .bridge import NovaActBridge
 
 
 class NovaAct:
-    """Main class for the Nova ACT Framework."""
+    """Main NovaAct class."""
 
     def __init__(self):
-        """Initialize NovaAct instance."""
-        self._bridge_client = None  # Will be initialized in start()
+        """Initialize NovaAct."""
+        self.bridge = NovaActBridge()
 
-    async def start(self):
-        """Start the Nova ACT Framework."""
-        from .bridge import BridgeClient
+    async def connect(self):
+        """Connect to Nova ACT bridge."""
+        await self.bridge.connect()
 
-        self._bridge_client = BridgeClient()
-        await self._bridge_client.connect()
+    async def disconnect(self):
+        """Disconnect from Nova ACT bridge."""
+        await self.bridge.disconnect()
 
-    async def stop(self):
-        """Stop the Nova ACT Framework."""
-        if self._bridge_client:
-            await self._bridge_client.close()
-            self._bridge_client = None
+    @property
+    def connected(self) -> bool:
+        """Return True if connected to the bridge."""
+        return self.bridge.connected

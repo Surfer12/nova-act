@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from select import select
-from sys import stdin
-from threading import Thread, Event
+import sys
+import threading
 from typing import Optional
 
 from nova_act.util.terminal_manager import TerminalInputManager

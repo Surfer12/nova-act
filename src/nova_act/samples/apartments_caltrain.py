@@ -56,8 +56,6 @@ def aggregate(results: list[dict]) -> list[dict]:
     return sorted(results, key=sort_key)
 
 
-import os  # import os
-
 async def main(
     caltrain_city: str = "Redwood City",
     bedrooms: int = 2,
@@ -70,7 +68,7 @@ async def main(
         "https://www.realestate-website.com/",
         headless=headless,
         chrome_channel="chromium",
-        nova_act_api_key=os.environ.get('NOVA_ACT_API_KEY'),
+        nova_act_api_key=os.environ.get("NOVA_ACT_API_KEY"),
     )
     await main_nova.start()
     await main_nova.act(f"search for apartments in {caltrain_city}")
@@ -88,7 +86,7 @@ async def main(
             listing.url,
             headless=headless,
             chrome_channel="chromium",
-            nova_act_api_key=os.environ.get('NOVA_ACT_API_KEY'),
+            nova_act_api_key=os.environ.get("NOVA_ACT_API_KEY"),
         )
         await detail_nova.start()
         # Act on finding distance information (e.g., via clicking or reading a field)
@@ -104,6 +102,4 @@ async def main(
 
 
 if __name__ == "__main__":
-    import asyncio
-
-    fire.Fire(lambda **kwargs: asyncio.run(main(**kwargs)))
+    Fire(lambda **kwargs: asyncio.run(main(**kwargs)))
