@@ -2,11 +2,14 @@
 
 import argparse
 import asyncio
+import logging
 import sys
 
-from nova_act import NovaAct, setup_logging
+from nova_act import NovaAct
 
-_LOGGER = setup_logging(__name__)
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+_LOGGER = logging.getLogger(__name__)
 
 
 def create_parser() -> argparse.ArgumentParser:

@@ -14,13 +14,13 @@ readme = "README.md"
 
 [tasks]
 # Development environment
-run-dev = { cmd = "python -m nova_act.main --config=configs/dev.json --debug --log-level=debug" }
+run-dev = { cmd = "python start_server.py --config=configs/dev.json --debug --log-level=debug" }
 
 # Production environment
-run-prod = { cmd = "python -m nova_act.main --config=configs/prod.json --optimize" }
+run-prod = { cmd = "python start_server.py --config=configs/prod.json --optimize" }
 
 # Testing environment
-run-test = { cmd = "python -m nova_act.main --config=configs/test.json --test-mode" }
+run-test = { cmd = "python start_server.py --config=configs/test.json --test-mode" }
 
 # Build task
 build = { cmd = "python -m build" }
@@ -43,7 +43,7 @@ fix-diagnostics = { cmd = "python -m nova_act.diagnostics --fix-all" }
 
 # Server tasks
 # Frontend server (runs on port 5173)
-run-frontend = { cmd = "cd /Users/ryandavidoates/yamls && npm run dev" }
+run-frontend = { cmd = "cd src/frontend && npm run dev" }
 # Backend server (runs on port 8081)
 run-backend = { cmd = "python start_server.py" }
 # Clear backend cache and restart server
@@ -77,6 +77,8 @@ retry = ">=0.9.2,<0.10"
 iniconfig = ">=2.0.0,<3"
 pytest = ">=8.3.5,<9"
 aiohttp = ">=3.11.16,<4"
+pytest-asyncio = ">=0.26.0,<0.27"
+cryptography = ">=44.0.2,<45"
 
 [pypi-dependencies]
 build = "*"

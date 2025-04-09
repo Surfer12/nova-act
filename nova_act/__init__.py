@@ -5,4 +5,4 @@ from .nova_act import NovaAct
 
 __version__ = "0.1.0"
 
-__all__ = ['NovaActBridge', 'NovaAct', '__version__']
+__all__ = ["NovaActBridge", "NovaAct", "__version__"]

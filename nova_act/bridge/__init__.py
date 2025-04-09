@@ -24,4 +24,5 @@ class NovaActBridge:
         """Return True if connected to the bridge."""
         return self._connected
 
-__all__ = ['NovaActBridge']
+
+__all__ = ["NovaActBridge"]

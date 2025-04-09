@@ -8,6 +8,18 @@ version = "0.1.0"
 description = "NovaAct Python Package"
 requires-python = ">=3.8"
 dependencies = []
+authors = [
+    {name = "Amazon"}
+]
+
+[tool.hatch.build]
+include = [
+    "src/nova_act/**/*.py",
+]
+packages = ["src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nova_act"]
 
 [project.optional-dependencies]
 dev = [
@@ -15,6 +27,3 @@ dev = [
     "pytest-cov",
     "pytest-asyncio"
 ]
-
-[tool.hatch.build]
-packages = ["src"]

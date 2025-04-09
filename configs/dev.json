@@ -1,6 +1,6 @@
 {
   "environment": "development",
-  "browser": "chrome",
+  "browser": "chromium",
   "logging": {
     "level": "debug",
     "file": "logs/nova_act_dev.log",

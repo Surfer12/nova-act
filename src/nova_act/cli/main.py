@@ -10,6 +10,8 @@ from asyncio import get_running_loop
 from json import dumps, loads
 from typing import Dict, TypedDict
 
+from nova_act.util.logging import setup_logging
+
 
 class NovaActConfig(TypedDict, total=False):
     """Type definition for Nova ACT configuration."""
@@ -36,18 +38,6 @@ def load_config(config_file: str) -> NovaActConfig:
             environment=str(config_data["environment"]),
             logging={str(k): str(v) for k, v in config_data["logging"].items()},
         )
-
-
-def setup_logging(log_level: str = "info") -> None:
-    """Configure logging based on the specified log level."""
-    numeric_level = getattr(logging, log_level.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError(f"Invalid log level: {log_level}")
-
-    logging.basicConfig(
-        level=numeric_level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
 
 
 def main() -> None:
@@ -80,8 +70,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # Setup logging
-    setup_logging(args.log_level)
-    logger = logging.getLogger(__name__)
+    logger = setup_logging(__name__, args.log_level)
 
     try:
         # Load configuration

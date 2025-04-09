@@ -16,7 +16,7 @@ class NovaActBridge:
 
     def __init__(self, host: str = "localhost", port: int = 8081):
         """Initialize the NovaActBridge.
-        
+
         Args:
             host: Host address for the WebSocket server
             port: Port for the WebSocket server
@@ -31,13 +31,10 @@ class NovaActBridge:
         """Start the bridge server."""
         from nova_act.bridge.server import app
         import uvicorn
-        
+
         try:
             config = uvicorn.Config(
-                app=app,
-                host=self._host,
-                port=self._port,
-                log_level="info"
+                app=app, host=self._host, port=self._port, log_level="info"
             )
             server = uvicorn.Server(config)
             self._connected = True
@@ -60,14 +57,14 @@ class NovaActBridge:
 
     async def send_thought_update(self, thought_data: Dict[str, Any]) -> None:
         """Send a thought update through the bridge.
-        
+
         Args:
             thought_data: The thought data to send
         """
         if not self._connected:
             _LOGGER.warning("Cannot send thought update: Bridge not connected")
             return
-            
+
         # This would use the API to post the thought
         # In a real implementation, we'd use aiohttp or httpx to make a POST request
         _LOGGER.info(f"Sending thought update: {thought_data}")
