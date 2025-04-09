@@ -1,14 +1,12 @@
 # API Reference
 
-This document provides detailed information about the Nova ACT Python SDK API, implemented in `src/nova_act/`.
+This document details the API for the Nova ACT Python SDK. For other implementations, see:
+- [Java SDK Documentation](java-sdk.md)
+- [Web Frontend Documentation](web-frontend.md)
 
-## Project Structure
+For an overview of how these components fit together, see the [Project Structure](project-structure.md) documentation.
 
-Nova ACT consists of multiple components:
-
-1. **Python SDK** (`src/nova_act/`): This API reference documents this implementation
-2. **Java SDK** (`main/java/com/amazon/novaact/`): For Java bindings, see the Java documentation
-3. **Web Frontend** (`src/frontend/`): React web application
+This document provides detailed information about the Nova ACT API.
 
 ## NovaAct Class
 

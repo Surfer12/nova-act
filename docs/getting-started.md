@@ -52,13 +52,7 @@ pip install -e .
 
 ## Project Components
 
-Nova ACT consists of multiple components:
-
-1. **Python SDK** (`src/nova_act/`): The primary implementation documented here
-2. **Java SDK** (`main/java/com/amazon/novaact/`): Java bindings for Nova ACT
-3. **Web Frontend** (`src/frontend/`): React TypeScript web application
-
-This guide focuses on the Python SDK.
+Nova ACT provides multiple implementation options to suit different needs. This guide focuses on the Python SDK, which is the primary and recommended implementation for most users. For a complete overview of all components and their organization, please refer to the [Project Structure](project-structure.md) documentation.
 
 ## Basic Usage
 

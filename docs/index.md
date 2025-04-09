@@ -14,13 +14,7 @@ Welcome to the Nova ACT documentation! Nova ACT is a powerful Python SDK that en
 
 ## Project Structure
 
-Nova ACT is a multi-component project organized as follows:
-
-- **Python SDK**: Located in `src/nova_act/`, this is the primary Python implementation documented here.
-- **Java SDK**: Located in `main/java/com/amazon/novaact/`, provides Java bindings for Nova ACT.
-- **Web Frontend**: Located in `src/frontend/`, contains the React TypeScript web application.
-
-For most users, the Python SDK in `src/nova_act/` is the recommended interface.
+Nova ACT is a multi-component project with Python SDK, Java SDK, and Web Frontend components. See the [Project Structure](project-structure.md) documentation for a detailed overview of all components and their organization.
 
 ## Quick Start
 
@@ -51,7 +45,6 @@ pixi add nova-act
 - [Getting Started](getting-started.md) - Set up and basic usage
 - [API Reference](api-reference.md) - Detailed API documentation
 - [Examples](examples.md) - Practical usage examples
-- [Project Structure](project-structure.md) - Project organization and recommendations
 
 ## Contributing
 

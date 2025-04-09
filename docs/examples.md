@@ -1,13 +1,12 @@
 # Examples
 
-This document provides practical examples of using the Nova ACT Python SDK (`src/nova_act/`) for various automation scenarios.
+This page provides examples using the Python SDK. For examples using other implementations, see:
+- [Java SDK Examples](java-examples.md)
+- [Web Frontend Examples](web-frontend-examples.md)
 
-## SDK Support
+For details about which implementation best suits your needs, see the [Project Structure](project-structure.md) documentation.
 
-Nova ACT provides multiple SDK implementations:
-- **Python SDK** (`src/nova_act/`): These examples apply to this implementation
-- **Java SDK** (`main/java/com/amazon/novaact/`): See Java documentation for Java-specific examples
-- **Web Frontend** (`src/frontend/`): React TypeScript web application
+This document provides practical examples of using Nova ACT for various automation scenarios.
 
 ## Basic Usage
 
