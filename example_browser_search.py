@@ -16,14 +16,31 @@ async def main():
     try:
         # Import within function to handle import errors gracefully
         try:
+            # Try to import the full implementation from src directory first
             from src.nova_act.nova_act import NovaAct
+            logger.info("Using full NovaAct implementation")
         except ImportError:
-            from nova_act.core import NovaAct  # Fallback to core implementation
-            logger.warning("Using core NovaAct implementation (minimal functionality)")
+            try:
+                # Try to import the full implementation from installed package
+                from nova_act import NovaAct
+                logger.info("Using installed NovaAct implementation")
+            except ImportError:
+                # Fallback to minimal core implementation
+                from nova_act.core import NovaAct
+                logger.warning("Using core NovaAct implementation (minimal functionality)")
         
-        # 1. Create NovaAct instance
-        logger.info("Creating NovaAct instance...")
-        nova = NovaAct(headless=False)  # Use visible browser for demonstration
+        # 1. Create NovaAct instance with Chromium
+        logger.info("Creating NovaAct instance with Chromium...")
+        try:
+            # Try to use chrome_channel parameter (only in full implementation)
+            nova = NovaAct(
+                headless=False,  # Use visible browser for demonstration
+                chrome_channel="chromium"  # Specifically use Chromium browser
+            )
+        except TypeError:
+            # Fallback for core implementation that doesn't support chrome_channel
+            logger.warning("Core implementation doesn't support chrome_channel, using default browser")
+            nova = NovaAct(headless=False)
         logger.info("NovaAct instance created successfully")
         
         # 2. Start the browser
