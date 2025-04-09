@@ -1,4 +1,5 @@
 """Bridge implementation module."""
+
 import asyncio
 import json
 import uuid
@@ -10,6 +11,7 @@ from websockets.legacy.server import WebSocketServerProtocol
 from ..util.logging import setup_logging
 
 _LOGGER = setup_logging(__name__)
+
 
 class NovaBridge:
     """Bridge for Nova ACT to communicate with frontend."""
@@ -24,12 +26,12 @@ class NovaBridge:
         """Broadcast a message to all connected clients."""
         if not self.clients:
             return
-            
+
         try:
             message = {"type": message_type, "data": data}
             message_json = json.dumps(message)
             _LOGGER.debug(f"Broadcasting message: {message}")
-            
+
             for client in self.clients:
                 try:
                     await client.send(message_json)

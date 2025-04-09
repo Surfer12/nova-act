@@ -79,7 +79,9 @@ def _add_bbox_to_image(image: str, response: str) -> str:
     pil_image.save(image_bytes_io, format="JPEG")
 
     # Return the modified image with the data prefix.
-    return "data:image/jpeg;base64," + base64.b64encode(image_bytes_io.getvalue()).decode("utf-8")
+    return "data:image/jpeg;base64," + base64.b64encode(
+        image_bytes_io.getvalue()
+    ).decode("utf-8")
 
 
 def format_run_info(steps: int, url: str, time: str, image: str, response: str) -> str:
@@ -162,7 +164,9 @@ class RunInfoCompiler:
 
             # Compile request and response JSON
             request_response_file_name = f"act_{act.id}_calls.json"
-            json_file_path = os.path.join(self._logs_directory, request_response_file_name)
+            json_file_path = os.path.join(
+                self._logs_directory, request_response_file_name
+            )
 
             step_info = []
             for step in act.steps:

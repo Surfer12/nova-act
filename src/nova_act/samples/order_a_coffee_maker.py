@@ -29,7 +29,9 @@ async def main(record_video: bool = False):
     ) as nova:
         await nova.act("search for a coffee maker")
         await nova.act("select the first result")
-        await nova.act("scroll down or up until you see 'add to cart' and then click 'add to cart'")
+        await nova.act(
+            "scroll down or up until you see 'add to cart' and then click 'add to cart'"
+        )
 
 
 if __name__ == "__main__":

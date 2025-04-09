@@ -77,26 +77,28 @@ async def async_main() -> None:
         # Import here to avoid circular imports
         try:
             from nova_act import NovaAct
-            
+
             # Get browser config from config.json
             browser_config = config.get("browser", {})
-            starting_page = browser_config.get("starting_page", "https://www.google.com")
+            starting_page = browser_config.get(
+                "starting_page", "https://www.google.com"
+            )
             headless = browser_config.get("headless", True)
-            
+
             logger.info(f"Launching browser with starting page: {starting_page}")
-            
+
             # Initialize NovaAct with bridge enabled
             nova = NovaAct(
                 starting_page=starting_page,
                 headless=headless,
                 enable_bridge=True,  # Enable bridge for async operation
             )
-            
+
             # Start the browser asynchronously
             await nova.start_async()
-            
+
             logger.info("Browser launched asynchronously. Press Ctrl+C to exit.")
-            
+
             # Keep running until interrupted
             try:
                 # This will run forever until interrupted
@@ -109,11 +111,11 @@ async def async_main() -> None:
             finally:
                 # Clean up
                 await nova.stop_async()
-                
+
         except ImportError as e:
             logger.error(f"Failed to import NovaAct: {e}")
             logger.info("Running in minimal mode without browser...")
-            
+
             # Just sleep to keep the process alive for demo purposes
             try:
                 while True:
@@ -125,6 +127,7 @@ async def async_main() -> None:
 
     except Exception as e:
         import traceback
+
         logger.error(f"Error: {e}")
         logger.error(traceback.format_exc())
         sys.exit(1)

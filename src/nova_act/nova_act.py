@@ -196,9 +196,15 @@ class NovaAct:
             # We were supplied an existing user_data_dir.
             if clone_user_data_dir:
                 # We want to make a copy so the original is unmodified.
-                self._session_user_data_dir = tempfile.mkdtemp(suffix="_nova_act_user_data_dir")
-                _LOGGER.debug(f"Copying {user_data_dir} to {self._session_user_data_dir=}")
-                shutil.copytree(user_data_dir, self._session_user_data_dir, dirs_exist_ok=True)
+                self._session_user_data_dir = tempfile.mkdtemp(
+                    suffix="_nova_act_user_data_dir"
+                )
+                _LOGGER.debug(
+                    f"Copying {user_data_dir} to {self._session_user_data_dir=}"
+                )
+                shutil.copytree(
+                    user_data_dir, self._session_user_data_dir, dirs_exist_ok=True
+                )
                 self._session_user_data_dir_is_temp = True
             else:
                 # We want to just use the original.
@@ -206,7 +212,9 @@ class NovaAct:
                 self._session_user_data_dir_is_temp = False
         else:
             # We weren't given an existing user_data_dir, just make a temp directory.
-            self._session_user_data_dir = tempfile.mkdtemp(suffix="_nova_act_user_data_dir")
+            self._session_user_data_dir = tempfile.mkdtemp(
+                suffix="_nova_act_user_data_dir"
+            )
             self._session_user_data_dir_is_temp = True
 
         _LOGGER.debug(f"{self._session_user_data_dir=}")
@@ -281,7 +289,10 @@ class NovaAct:
         self._bridge_task: asyncio.Task | None = None
 
     def __del__(self) -> None:
-        if hasattr(self, "_session_user_data_dir_is_temp") and self._session_user_data_dir_is_temp:
+        if (
+            hasattr(self, "_session_user_data_dir_is_temp")
+            and self._session_user_data_dir_is_temp
+        ):
             _LOGGER.debug(f"Deleting {self._session_user_data_dir}")
             shutil.rmtree(self._session_user_data_dir)
 
@@ -342,14 +353,18 @@ class NovaAct:
     def dispatcher(self) -> ExtensionDispatcher:
         """Get an ExtensionDispatcher for actuation on the current page."""
         if not self.started:
-            raise ClientNotStarted("Client must be started before accessing the dispatcher.")
+            raise ClientNotStarted(
+                "Client must be started before accessing the dispatcher."
+            )
         assert self._dispatcher is not None
         return self._dispatcher
 
     def start(self) -> None:
         """Start the client and WebSocket bridge synchronously."""
         if self.started:
-            _LOGGER.warning("Attention: Client is already started; to start over, run stop().")
+            _LOGGER.warning(
+                "Attention: Client is already started; to start over, run stop()."
+            )
             return
 
         try:
@@ -366,7 +381,9 @@ class NovaAct:
                     logs_directory=self._logs_directory,
                 )
                 self._playwright._session_id = session_id
-                _TRACE_LOGGER.info(f"\nstart session {session_id} on {self._starting_page}\n")
+                _TRACE_LOGGER.info(
+                    f"\nstart session {session_id} on {self._starting_page}\n"
+                )
                 set_logging_session(session_id)
 
             # We don't start the bridge in this synchronous version
@@ -374,11 +391,13 @@ class NovaAct:
         except Exception as e:
             self.stop()
             raise StartFailed from e
-            
+
     async def start_async(self) -> None:
         """Start the client and WebSocket bridge asynchronously."""
         if self.started:
-            _LOGGER.warning("Attention: Client is already started; to start over, run stop().")
+            _LOGGER.warning(
+                "Attention: Client is already started; to start over, run stop()."
+            )
             return
 
         try:
@@ -395,7 +414,9 @@ class NovaAct:
                     logs_directory=self._logs_directory,
                 )
                 self._playwright._session_id = session_id
-                _TRACE_LOGGER.info(f"\nstart session {session_id} on {self._starting_page}\n")
+                _TRACE_LOGGER.info(
+                    f"\nstart session {session_id} on {self._starting_page}\n"
+                )
                 set_logging_session(session_id)
 
             # Start the bridge if it exists
@@ -423,14 +444,14 @@ class NovaAct:
             # to avoid async complications
         except Exception as e:
             raise StopFailed from e
-            
+
     async def stop_async(self) -> None:
         """Stop the client and WebSocket bridge asynchronously."""
         try:
             if not self.started:
                 _LOGGER.warning("Attention: Client is already stopped.")
                 return
-                
+
             assert self._dispatcher is not None
             self._dispatcher.cancel_prompt()
             self._playwright.stop()
@@ -460,7 +481,9 @@ class NovaAct:
     ) -> ActResult:
         """Actuate a natural language command and broadcast updates."""
         if not self.started:
-            raise ClientNotStarted("Run start() to start the client before calling act().")
+            raise ClientNotStarted(
+                "Run start() to start the client before calling act()."
+            )
 
         if not self._playwright._session_id:
             raise ValueError("Missing Session ID")
@@ -488,7 +511,9 @@ class NovaAct:
         _TRACE_LOGGER.info(f'{get_session_id_prefix()}act("{prompt}")')
 
         try:
-            response = await self.dispatcher.dispatch_and_wait_for_prompt_completion(act)
+            response = await self.dispatcher.dispatch_and_wait_for_prompt_completion(
+                act
+            )
             if isinstance(response, ActError):
                 raise response
         except (ActError, AuthError):

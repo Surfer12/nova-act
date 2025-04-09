@@ -51,6 +51,7 @@ def main() -> None:
     # Detect if we're running inside an asyncio event loop already
     try:
         import asyncio
+
         try:
             loop = asyncio.get_running_loop()
             running_in_asyncio = True
@@ -58,7 +59,7 @@ def main() -> None:
             running_in_asyncio = False
     except ImportError:
         running_in_asyncio = False
-        
+
     # If we're already in an asyncio loop, we can't use the sync Playwright API
     if running_in_asyncio:
         print("Error: nova-act.sh cannot be run inside an asyncio loop.")
@@ -94,23 +95,25 @@ def main() -> None:
         try:
             from nova_act import NovaAct
             import time
-            
+
             # Get browser config from config.json
             browser_config = config.get("browser", {})
-            starting_page = browser_config.get("starting_page", "https://www.google.com")
+            starting_page = browser_config.get(
+                "starting_page", "https://www.google.com"
+            )
             headless = browser_config.get("headless", True)
-            
+
             logger.info(f"Launching browser with starting page: {starting_page}")
-            
+
             # Initialize NovaAct
             nova = NovaAct(
                 starting_page=starting_page,
                 headless=headless,
             )
-            
+
             # Start the browser directly (this is synchronous)
             nova.start()
-            
+
             # Keep the browser open until user interrupts
             logger.info("Browser launched. Press Ctrl+C to exit.")
             try:
@@ -121,21 +124,23 @@ def main() -> None:
             finally:
                 # Clean up
                 nova.stop()
-                
+
         except ImportError as e:
             logger.error(f"Failed to import NovaAct: {e}")
             logger.info("Running in minimal mode without browser...")
-            
+
             # Just sleep to keep the process alive for demo purposes
             try:
                 while True:
                     import time
+
                     time.sleep(1)
             except KeyboardInterrupt:
                 logger.info("User interrupted. Exiting...")
 
     except Exception as e:
         import traceback
+
         logger.error(f"Error: {e}")
         logger.error(traceback.format_exc())
         sys.exit(1)

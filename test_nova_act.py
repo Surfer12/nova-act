@@ -23,7 +23,9 @@ async def test_basic_functionality() -> None:
 
         # First verify we're on Google
         result: ActResult = await nova.act("Are we on google.com?", schema=BOOL_SCHEMA)
-        assert result.matches_schema and result.parsed_response, "Should be on Google.com"
+        assert result.matches_schema and result.parsed_response, (
+            "Should be on Google.com"
+        )
 
         # Try a simple search
         await nova.act("Search for 'Nova Act Amazon'")

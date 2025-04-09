@@ -33,7 +33,9 @@ class MessageEncrypter:
 
     def __init__(self):
         self._key = secrets.token_hex(256 // 8)  # 256-bit random string
-        self._key_bytes = bytes(int(self._key[i : i + 2], 16) for i in range(0, len(self._key), 2))
+        self._key_bytes = bytes(
+            int(self._key[i : i + 2], 16) for i in range(0, len(self._key), 2)
+        )
         self._aesgcm = AESGCM(self._key_bytes)
 
     def make_set_key_message(self) -> dict:
@@ -70,4 +72,6 @@ class MessageEncrypter:
         decrypted_bytes = self._aesgcm.decrypt(iv, encrypted_bytes, None)
         decrypted_json = decrypted_bytes.decode("utf-8")  # Convert bytes to string
         _LOGGER.debug("Decrypted string %s", decrypted_json)
-        return json.loads(decrypted_json)  # Convert JSON string back to Python object (dict)
+        return json.loads(
+            decrypted_json
+        )  # Convert JSON string back to Python object (dict)

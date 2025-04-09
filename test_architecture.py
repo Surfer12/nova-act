@@ -31,11 +31,11 @@ class TestArchitecture(unittest.TestCase):
         # Verify bridge client was created with correct parameters
         # BridgeClient is created during start()
         self.assertIsNone(nova._bridge_client)
-        
+
         # Start the NovaAct instance
         loop = asyncio.get_event_loop()
         loop.run_until_complete(nova.start())
-        
+
         mock_bridge.assert_called_once()
         self.assertIsNotNone(nova._bridge_client)
 
@@ -43,16 +43,12 @@ class TestArchitecture(unittest.TestCase):
         """Test ActResult schema validation functionality."""
         # Create test data
         success_result = ActResult(
-            success=True,
-            message="Test success",
-            data={"test": "value"}
+            success=True, message="Test success", data={"test": "value"}
         )
         self.assertTrue(success_result)
 
         error_result = ActResult(
-            success=False,
-            message="Test error",
-            error=Exception("Test exception")
+            success=False, message="Test error", error=Exception("Test exception")
         )
         self.assertFalse(error_result)
 

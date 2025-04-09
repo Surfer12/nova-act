@@ -1,4 +1,5 @@
 """Type stubs for nova_act."""
+
 from typing import Dict, Any
 
 from nova_act.bridge.bridge import NovaBridge
@@ -13,11 +14,11 @@ def load_config(config_path: str) -> Dict[str, Any]: ...
 __version__: str
 
 __all__ = [
-    'load_config',
-    'setup_logging',
-    'NovaAct',
-    'BridgeClient',
-    'NovaBridgeServer',
-    'NovaBridge',
-    'ActResult',
+    "load_config",
+    "setup_logging",
+    "NovaAct",
+    "BridgeClient",
+    "NovaBridgeServer",
+    "NovaBridge",
+    "ActResult",
 ]

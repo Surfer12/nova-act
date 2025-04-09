@@ -15,10 +15,12 @@ class BridgeClient:
     """Client for communicating with the Nova Bridge service."""
 
     def __init__(
-        self, base_url: str = "http://localhost:8081", ws_url: str = "ws://localhost:8081/ws"
+        self,
+        base_url: str = "http://localhost:8081",
+        ws_url: str = "ws://localhost:8081/ws",
     ):
         """Initialize client.
-        
+
         Args:
             base_url: Base URL of the bridge service
             ws_url: WebSocket URL for real-time communication

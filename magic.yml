@@ -1,0 +1,18 @@
+version: 1.0
+
+tasks:
+  nova-act:
+    description: Run nova_act in standard mode
+    command: pixi run python -m nova_act.cli.main --config config.json
+
+  nova-act-async:
+    description: Run nova_act in async mode
+    command: pixi run python -m nova_act.cli.async_main --config config.json
+
+  nova-act-sync:
+    description: Run nova_act in sync mode with async debug disabled
+    command: PYTHONASYNCIODEBUG=0 pixi run python -m nova_act.cli.main --config config.json
+
+  nova-act-demo:
+    description: Run the nova_act demo script
+    command: pixi run python nova_act_demo.py

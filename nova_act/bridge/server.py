@@ -16,10 +16,10 @@ _LOGGER = setup_logging(__name__)
 
 class NovaBridgeServer:
     """Server for Nova Bridge service."""
-    
+
     def __init__(self, host: str = "localhost", port: int = 8081):
         """Initialize server.
-        
+
         Args:
             host: Host to bind server to
             port: Port to listen on
@@ -29,7 +29,7 @@ class NovaBridgeServer:
         self.app = web.Application()
         self.websocket_handler = None
         self._setup_routes()
-        
+
     def _setup_routes(self):
         """Set up HTTP routes."""
         self.app.router.add_post("/thought", self._handle_thought)

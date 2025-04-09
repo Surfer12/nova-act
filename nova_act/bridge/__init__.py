@@ -6,8 +6,8 @@ from .server import NovaBridgeServer
 from .websocket import websocket_handler
 
 __all__ = [
-    'NovaBridge',
-    'BridgeClient',
-    'NovaBridgeServer',
-    'websocket_handler',
+    "NovaBridge",
+    "BridgeClient",
+    "NovaBridgeServer",
+    "websocket_handler",
 ]

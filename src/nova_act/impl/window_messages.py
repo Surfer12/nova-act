@@ -102,5 +102,7 @@ class WindowMessageHandler:
                     self._act.add_step(Step.from_message(message))
 
             except Exception as ex:
-                _LOGGER.error("Error handling message in dispatcher: %s", ex, exc_info=True)
+                _LOGGER.error(
+                    "Error handling message in dispatcher: %s", ex, exc_info=True
+                )
                 raise

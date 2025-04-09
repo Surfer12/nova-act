@@ -18,24 +18,26 @@ import json
 import os
 from typing import Any, Dict, Optional
 
+
 def load_config(config_path: str) -> Dict[str, Any]:
     """Load configuration from a JSON file.
-    
+
     Args:
         config_path: Path to the configuration file
-        
+
     Returns:
         Dict containing the configuration
-        
+
     Raises:
         FileNotFoundError: If config file doesn't exist
         json.JSONDecodeError: If config file is not valid JSON
     """
     if not os.path.exists(config_path):
         raise FileNotFoundError(f"Configuration file not found: {config_path}")
-        
-    with open(config_path, 'r') as f:
+
+    with open(config_path, "r") as f:
         return json.load(f)
+
 
 # Initialize logging and core utilities
 from .util.logging import setup_logging
@@ -60,12 +62,12 @@ __version__ = "0.1.0"
 
 # Export public API
 __all__ = [
-    'load_config',
-    'setup_logging', 
-    'NovaAct',
-    'BridgeClient',
-    'NovaBridgeServer',
-    'NovaBridge',
-    'ActResult',
-    '__version__'
+    "load_config",
+    "setup_logging",
+    "NovaAct",
+    "BridgeClient",
+    "NovaBridgeServer",
+    "NovaBridge",
+    "ActResult",
+    "__version__",
 ]

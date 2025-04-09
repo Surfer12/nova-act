@@ -1,4 +1,5 @@
 """Main CLI module."""
+
 import argparse
 import asyncio
 import sys
@@ -7,10 +8,12 @@ from nova_act import NovaAct, setup_logging
 
 _LOGGER = setup_logging(__name__)
 
+
 def create_parser() -> argparse.ArgumentParser:
     """Create argument parser."""
     parser = argparse.ArgumentParser(description="Nova ACT Framework CLI")
     return parser
+
 
 def main():
     """Main entry point."""

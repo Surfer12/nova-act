@@ -32,7 +32,9 @@ class ThoughtUpdate(BaseModel):
 
     sessionId: str = Field(..., description="Unique session identifier")
     initialState: str = Field(..., description="Initial state of the thought")
-    recursiveElaboration: str = Field(..., description="Recursive elaboration of the thought")
+    recursiveElaboration: str = Field(
+        ..., description="Recursive elaboration of the thought"
+    )
     transformativeInput: str = Field(..., description="Transformative input applied")
     emergentPattern: str = Field(..., description="Emergent pattern observed")
     processingLevel: str = Field(..., description="Level of processing")
@@ -167,7 +169,9 @@ async def create_intervention(intervention: InterventionUpdate) -> Dict[str, Any
     interventions.append(intervention_dict)
 
     # Broadcast to WebSocket clients
-    await manager.broadcast({"eventType": "interventionUpdate", "data": intervention_dict})
+    await manager.broadcast(
+        {"eventType": "interventionUpdate", "data": intervention_dict}
+    )
 
     return intervention_dict
 

@@ -1,8 +1,9 @@
 """Main NovaAct implementation module."""
 
+
 class NovaAct:
     """Main class for the Nova ACT Framework."""
-    
+
     def __init__(self):
         """Initialize NovaAct instance."""
         self._bridge_client = None  # Will be initialized in start()
@@ -10,6 +11,7 @@ class NovaAct:
     async def start(self):
         """Start the Nova ACT Framework."""
         from .bridge import BridgeClient
+
         self._bridge_client = BridgeClient()
         await self._bridge_client.connect()
 
