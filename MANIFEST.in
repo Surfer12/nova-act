@@ -1,0 +1,6 @@
+include README.md
+include requirements.txt
+include LICENSE
+include NOTICE
+include py.typed
+recursive-include src *.py *.pyi
