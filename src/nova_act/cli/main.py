@@ -7,11 +7,12 @@ import sys
 from typing import Dict, TypedDict
 
 
-class NovaActConfig(TypedDict):
+class NovaActConfig(TypedDict, total=False):
     """Type definition for Nova ACT configuration."""
 
     environment: str
     logging: Dict[str, str]
+    browser: Dict[str, object]
 
 
 def load_config(config_file: str) -> NovaActConfig:
@@ -62,7 +63,7 @@ def main() -> None:
 
     try:
         # Load configuration
-        _ = load_config(args.config)  # Config loaded but not used in this part of the code
+        config = load_config(args.config)
 
         logger.info(f"Starting Nova ACT with configuration from {args.config}")
         if args.debug:
@@ -72,7 +73,51 @@ def main() -> None:
         if args.test_mode:
             logger.info("Running in test mode")
 
-        # Here you would add your actual application logic
+        # Import here to avoid circular imports
+        try:
+            from nova_act import NovaAct
+
+            # Get browser config from config.json
+            browser_config = config.get("browser", {})
+            starting_page = browser_config.get("starting_page", "https://www.google.com")
+            headless = browser_config.get("headless", True)
+
+            logger.info(f"Launching browser with starting page: {starting_page}")
+
+            # Initialize and start NovaAct
+            nova = NovaAct(
+                starting_page=starting_page,
+                headless=headless,
+            )
+
+            # Start the browser (this will open it)
+            nova.start()
+
+            # Keep the browser open until user interrupts
+            logger.info("Browser launched. Press Ctrl+C to exit.")
+            try:
+                while True:
+                    import time
+
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                logger.info("User interrupted. Closing browser...")
+            finally:
+                # Clean up
+                nova.stop()
+
+        except ImportError as e:
+            logger.error(f"Failed to import NovaAct: {e}")
+            logger.info("Running in minimal mode without browser...")
+
+            # Just sleep to keep the process alive for demo purposes
+            try:
+                while True:
+                    import time
+
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                logger.info("User interrupted. Exiting...")
 
     except Exception as e:
         logger.error(f"Error: {e}")

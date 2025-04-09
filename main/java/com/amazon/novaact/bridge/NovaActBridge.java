@@ -23,7 +23,7 @@ public class NovaActBridge extends WebSocketServer {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final Set<WebSocket> clients = new CopyOnWriteArraySet<>();
-    private Map<String, Object> fractalConfig;
+    private final Map<String, Object> fractalConfig = new ConcurrentHashMap<>();
 
     public NovaActBridge(String host, int port) {
         super(new InetSocketAddress(host, port));
@@ -49,7 +49,7 @@ public class NovaActBridge extends WebSocketServer {
 
             String type = data.path("type").asText();
             if ("FRACTAL_CONFIG".equals(type)) {
-                fractalConfig = objectMapper.convertValue(data.path("config"), Map.class);
+                fractalConfig.putAll(objectMapper.convertValue(data.path("config"), Map.class));
                 broadcast("fractalConfigAck", Map.of("status", "received"));
             } else if ("META_INTERVENTION".equals(type)) {
                 handleMetaIntervention(data.path("intervention"));
@@ -92,7 +92,7 @@ public class NovaActBridge extends WebSocketServer {
     }
 
     public void sendThoughtUpdate(Map<String, Object> thoughtData) {
-        if (fractalConfig != null) {
+        if (fractalConfig.size() > 0) {
             thoughtData = transformThoughtForFractal(thoughtData);
         }
         broadcast("thoughtUpdate", thoughtData);
@@ -120,7 +120,7 @@ public class NovaActBridge extends WebSocketServer {
 
     private List<Map<String, Object>> applyFractalTransformations(Map<String, Object> thoughtData) {
         List<Map<String, Object>> transformations = new ArrayList<>();
-        if (fractalConfig != null && fractalConfig.containsKey("transformations")) {
+        if (fractalConfig.size() > 0 && fractalConfig.containsKey("transformations")) {
             // Apply transformations based on fractal config
             // This is a simplified version - actual implementation would depend on transformation rules
         }

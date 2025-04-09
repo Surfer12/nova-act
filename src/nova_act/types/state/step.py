@@ -11,13 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import annotations
+
 import time
 from dataclasses import dataclass
 from datetime import datetime as dt
+from typing import TypedDict, Dict, Any
 
 
 @dataclass(frozen=True)
 class ModelInput:
+    """Input data for the model."""
+
     image: str
     prompt: str
     active_url: str
@@ -26,18 +31,64 @@ class ModelInput:
 
 @dataclass(frozen=True)
 class ModelOutput:
+    """Output data from the model."""
+
     awl_raw_program: str
+
+
+class RawMessageInput(TypedDict):
+    """Type definition for input section of raw message."""
+
+    screenshot: str
+    prompt: str
+    metadata: Dict[str, Any]
+    agentRunCreate: Dict[str, str]
+
+
+class RawMessageOutput(TypedDict):
+    """Type definition for output section of raw message."""
+
+    rawProgramBody: str
+
+
+class RawMessage(TypedDict):
+    """Type definition for the complete raw message."""
+
+    input: RawMessageInput
+    output: RawMessageOutput
 
 
 @dataclass(frozen=True)
 class Step:
+    """
+    Represents a single step in the Nova Act process.
+
+    Attributes:
+        model_input: Input data for the model
+        model_output: Output data from the model
+        observed_time: Timestamp when the step was observed
+        rawMessage: Raw message data from the system
+    """
+
     model_input: ModelInput
     model_output: ModelOutput
     observed_time: dt
-    rawMessage: dict[str, dict]
+    rawMessage: RawMessage
 
     @classmethod
-    def from_message(cls, message: dict[str, dict]) -> "Step":
+    def from_message(cls, message: RawMessage) -> "Step":
+        """
+        Create a Step instance from a raw message.
+
+        Args:
+            message: Raw message containing input and output data
+
+        Returns:
+            Step: New Step instance with parsed data
+
+        Raises:
+            KeyError: If required fields are missing from the message
+        """
         # Extract input data
         input_data = message.get("input", {})
         model_input = ModelInput(
@@ -62,8 +113,13 @@ class Step:
         )
 
     # Input validation
-    def __post_init__(self):
-        """Validate instance after creation."""
+    def __post_init__(self) -> None:
+        """
+        Validate instance after creation.
+
+        Raises:
+            ValueError: If required fields are missing or invalid
+        """
         if not self.model_input.image:
             raise ValueError("Screenshot is required")
         if not self.model_output.awl_raw_program:

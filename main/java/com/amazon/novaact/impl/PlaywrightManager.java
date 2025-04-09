@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -25,20 +26,20 @@ public class PlaywrightManager implements AutoCloseable {
     private final Path logsDirectory;
     private final boolean recordVideo;
 
-    private Playwright playwright;
-    private Browser browser;
-    private BrowserContext context;
+    private volatile Playwright playwright;
+    private volatile Browser browser;
+    private volatile BrowserContext context;
     private final AtomicBoolean started = new AtomicBoolean(false);
-    private String sessionId;
+    private volatile String sessionId;
 
     private PlaywrightManager(Builder builder) {
-        this.startingPage = builder.startingPage;
+        this.startingPage = Objects.requireNonNull(builder.startingPage, "startingPage must not be null");
         this.userDataDir = builder.userDataDir;
-        this.extensionPath = builder.extensionPath;
+        this.extensionPath = Objects.requireNonNull(builder.extensionPath, "extensionPath must not be null");
         this.screenWidth = builder.screenWidth;
         this.screenHeight = builder.screenHeight;
         this.headless = builder.headless;
-        this.chromeChannel = builder.chromeChannel;
+        this.chromeChannel = Objects.requireNonNull(builder.chromeChannel, "chromeChannel must not be null");
         this.userAgent = builder.userAgent;
         this.logsDirectory = builder.logsDirectory;
         this.recordVideo = builder.recordVideo;
@@ -172,7 +173,7 @@ public class PlaywrightManager implements AutoCloseable {
         private boolean recordVideo;
 
         public Builder startingPage(String startingPage) {
-            this.startingPage = startingPage;
+            this.startingPage = Objects.requireNonNull(startingPage, "startingPage must not be null");
             return this;
         }
 
@@ -182,16 +183,22 @@ public class PlaywrightManager implements AutoCloseable {
         }
 
         public Builder extensionPath(Path extensionPath) {
-            this.extensionPath = extensionPath;
+            this.extensionPath = Objects.requireNonNull(extensionPath, "extensionPath must not be null");
             return this;
         }
 
         public Builder screenWidth(int screenWidth) {
+            if (screenWidth <= 0) {
+                throw new IllegalArgumentException("screenWidth must be positive");
+            }
             this.screenWidth = screenWidth;
             return this;
         }
 
         public Builder screenHeight(int screenHeight) {
+            if (screenHeight <= 0) {
+                throw new IllegalArgumentException("screenHeight must be positive");
+            }
             this.screenHeight = screenHeight;
             return this;
         }
@@ -202,7 +209,7 @@ public class PlaywrightManager implements AutoCloseable {
         }
 
         public Builder chromeChannel(String chromeChannel) {
-            this.chromeChannel = chromeChannel;
+            this.chromeChannel = Objects.requireNonNull(chromeChannel, "chromeChannel must not be null");
             return this;
         }
 
@@ -222,6 +229,9 @@ public class PlaywrightManager implements AutoCloseable {
         }
 
         public PlaywrightManager build() {
+            if (screenWidth <= 0 || screenHeight <= 0) {
+                throw new IllegalStateException("Screen dimensions must be set and positive");
+            }
             return new PlaywrightManager(this);
         }
     }

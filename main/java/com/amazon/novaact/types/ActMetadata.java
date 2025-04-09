@@ -1,5 +1,7 @@
 package com.amazon.novaact.types;
 
+import java.time.Instant;
+
 /**
  * Metadata for an act() operation.
  */
@@ -7,18 +9,24 @@ public class ActMetadata {
     private final String sessionId;
     private final String actId;
     private final int numStepsExecuted;
-    private final double startTime;
-    private final double endTime;
+    private final Instant startTime;
+    private final Instant endTime;
     private final String prompt;
 
     public ActMetadata(String sessionId, String actId, int numStepsExecuted,
-                      double startTime, double endTime, String prompt) {
+                      Instant startTime, Instant endTime, String prompt) {
         this.sessionId = sessionId;
         this.actId = actId;
         this.numStepsExecuted = numStepsExecuted;
         this.startTime = startTime;
         this.endTime = endTime;
         this.prompt = prompt;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ActMetadata(sessionId=%s, actId=%s, numSteps=%d, start=%s, end=%s, prompt='%s')",
+                sessionId, actId, numStepsExecuted, startTime, endTime, prompt);
     }
 
     public String getSessionId() {
@@ -33,11 +41,11 @@ public class ActMetadata {
         return numStepsExecuted;
     }
 
-    public double getStartTime() {
+    public Instant getStartTime() {
         return startTime;
     }
 
-    public double getEndTime() {
+    public Instant getEndTime() {
         return endTime;
     }
 
@@ -49,8 +57,8 @@ public class ActMetadata {
         private String sessionId;
         private String actId;
         private int numStepsExecuted;
-        private double startTime;
-        private double endTime;
+        private Instant startTime;
+        private Instant endTime;
         private String prompt;
 
         public Builder sessionId(String sessionId) {
@@ -68,12 +76,12 @@ public class ActMetadata {
             return this;
         }
 
-        public Builder startTime(double startTime) {
+        public Builder startTime(Instant startTime) {
             this.startTime = startTime;
             return this;
         }
 
-        public Builder endTime(double endTime) {
+        public Builder endTime(Instant endTime) {
             this.endTime = endTime;
             return this;
         }

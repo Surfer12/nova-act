@@ -5,7 +5,7 @@
 	},
 	"browser": {
 		"starting_page": "https://www.google.com",
-		"headless": true,
+		"headless": false,
 		"chrome_channel": "chrome",
 		"screen_width": 1920,
 		"screen_height": 1080

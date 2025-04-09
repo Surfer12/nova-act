@@ -12,9 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
 from typing import cast
 
-from install_playwright import install
+try:
+    from install_playwright import install
+except ImportError:
+    # Fallback install function if the module is not available
+    def install(playwright_obj, with_deps=False):
+        """Fallback install function for Playwright browsers."""
+        try:
+            import subprocess
+
+            subprocess.check_call([sys.executable, "-m", "playwright", "install", "chromium"])
+            return True
+        except Exception as e:
+            print(f"Failed to install Playwright browsers: {e}")
+            return False
+
+
 from playwright.sync_api import BrowserContext, Page, Playwright, Video, sync_playwright
 from playwright.sync_api import Error as PlaywrightError
 

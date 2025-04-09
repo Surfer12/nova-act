@@ -9,7 +9,7 @@ interface Thought {
   recursiveElaboration: string;
   transformativeInput: string;
   emergentPattern: string;
-  processingLevel: string;
+  processingLevel: ProcessingLevel;
   iterationCount: number;
 }
 
@@ -17,11 +17,14 @@ interface Intervention {
   id: string;
   sessionId: string;
   timestamp: string;
-  type: string;
+  type: InterventionType;
   content: string;
   targetThought?: string;
-  processingLevel: string;
+  processingLevel: ProcessingLevel;
 }
+
+type ProcessingLevel = 'microLevel' | 'mesoLevel' | 'macroLevel';
+type InterventionType = 'thoughtUpdate' | 'interventionUpdate';
 
 interface BridgeState {
   thoughts: Thought[];
@@ -31,8 +34,16 @@ interface BridgeState {
 }
 
 interface BridgeMessage {
-  eventType: 'thoughtUpdate' | 'interventionUpdate';
+  eventType: InterventionType;
   data: Thought | Intervention;
+}
+
+interface PublishInterventionParams {
+  sessionId: string;
+  type: string;
+  content: string;
+  targetThought?: string;
+  processingLevel?: ProcessingLevel;
 }
 
 export function useNovaBridge(wsUrl: string = 'ws://localhost:8081') {
@@ -58,8 +69,13 @@ export function useNovaBridge(wsUrl: string = 'ws://localhost:8081') {
 
   useEffect(() => {
     let ws: WebSocket | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout>;
 
     const connect = () => {
+      if (ws?.readyState === WebSocket.CONNECTING) {
+        return;
+      }
+
       ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
@@ -69,26 +85,28 @@ export function useNovaBridge(wsUrl: string = 'ws://localhost:8081') {
         });
       };
 
-      ws.onclose = () => {
+      ws.onclose = (event: CloseEvent) => {
         updateState(draft => {
           draft.isConnected = false;
+          draft.error = `Connection closed${event.wasClean ? ' cleanly' : ''}. Code: ${event.code}`;
         });
-        // Attempt to reconnect after 5 seconds
-        setTimeout(connect, 5000);
+        reconnectTimeout = setTimeout(connect, 5000);
       };
 
-      ws.onerror = (error) => {
+      ws.onerror = (error: Event) => {
         updateState(draft => {
-          draft.error = 'WebSocket connection error';
+          draft.error = `WebSocket error: ${error instanceof ErrorEvent ? error.message : 'Unknown error'}`;
         });
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = (event: MessageEvent) => {
         try {
           const message = JSON.parse(event.data) as BridgeMessage;
           handleMessage(message);
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          updateState(draft => {
+            draft.error = `Error parsing message: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          });
         }
       };
     };
@@ -99,16 +117,19 @@ export function useNovaBridge(wsUrl: string = 'ws://localhost:8081') {
       if (ws) {
         ws.close();
       }
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
     };
-  }, [wsUrl, handleMessage]);
+  }, [wsUrl, handleMessage, updateState]);
 
-  const publishIntervention = useCallback(async (
-    sessionId: string,
-    type: string,
-    content: string,
-    targetThought?: string,
-    processingLevel: string = 'mesoLevel'
-  ) => {
+  const publishIntervention = useCallback(async ({
+    sessionId,
+    type,
+    content,
+    targetThought,
+    processingLevel = 'mesoLevel'
+  }: PublishInterventionParams): Promise<Response> => {
     try {
       const response = await fetch('http://localhost:8081/api/interventions', {
         method: 'POST',
@@ -125,15 +146,18 @@ export function useNovaBridge(wsUrl: string = 'ws://localhost:8081') {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to publish intervention');
+        throw new Error(`Failed to publish intervention: ${response.statusText}`);
       }
 
-      return await response.json();
+      return response;
     } catch (error) {
-      console.error('Error publishing intervention:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to publish intervention';
+      updateState(draft => {
+        draft.error = errorMessage;
+      });
       throw error;
     }
-  }, []);
+  }, [updateState]);
 
   return {
     ...state,

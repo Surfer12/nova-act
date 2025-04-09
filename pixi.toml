@@ -64,12 +64,12 @@ example-order-salad = { cmd = "python -m nova_act.samples.order_salad --user_dat
 [dependencies]
 python = ">=3.12.9,<3.13"
 pip = ">=25.0.1,<26"
-max = ">=25.3.0.dev2025040405,<26"
+max = ">=25.3.0.dev2025040820,<26"
 pandas = ">=2.2.3,<3"
 numpy = ">=1.26.4,<2"
 types-setuptools = ">=78.1.0.20250329,<79"
 fastapi = ">=0.114.2,<0.115"
-openai = ">=1.70.0,<2"
+openai = ">=1.71.0,<2"
 anthropic = ">=0.49.0,<0.50"
 
 [pypi-dependencies]
@@ -80,4 +80,4 @@ mypy = ">=1.15.0, <2"
 mkdocs = ">=1.6.1, <2"
 mkdocs-material = ">=9.6.11, <10"
 websockets = ">=15.0.1, <16"
-playwright = "==1.48.0"
+playwright = ">=1.51.0, <2"
