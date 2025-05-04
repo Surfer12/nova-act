@@ -161,6 +161,10 @@ class NovaAct:
         self._extension_version = get_extension_version(extension_path)
 
         self._starting_page = starting_page or "https://www.google.com"
+        
+        # Initialize WinGuruAnalyzer for specialized wind forecast analysis
+        from nova_act.impl.winguru_analyzer import WinGuruAnalyzer
+        self._winguru_analyzer = WinGuruAnalyzer(self.page, self._backend) if playwright_instance else None
 
         if user_data_dir:  # pragma: no cover
             # We were supplied an existing user_data_dir.
@@ -452,3 +456,19 @@ class NovaAct:
         self.page.goto(url, wait_until="domcontentloaded")
         self.page.wait_for_selector("#autonomy-listeners-registered", state="attached")
         self.dispatcher.wait_for_page_to_settle(go_to_url_timeout=self.go_to_url_timeout)
+
+    def analyze_winguru(self, url: str = "https://www.windguru.cz") -> "WindGuruAnalysisResult":
+        """Analyze content from winguru.cz using a fractal framework.
+        
+        Args:
+            url (str): The specific winguru.cz URL to analyze. Defaults to the main page.
+        
+        Returns:
+            WindGuruAnalysisResult: A named tuple containing raw data and multi-scale analysis.
+        """
+        if not self.started:
+            raise ClientNotStarted("NovaAct client must be started before analysis")
+        if not self._winguru_analyzer:
+            from nova_act.impl.winguru_analyzer import WinGuruAnalyzer
+            self._winguru_analyzer = WinGuruAnalyzer(self.page, self._backend)
+        return self._winguru_analyzer.analyze(url)
