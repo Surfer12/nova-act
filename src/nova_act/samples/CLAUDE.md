@@ -270,3 +270,47 @@ v
   were requested, I'll wait for further direction from the user before proceeding with 
   any additional enhancements.
 
+Great! I've updated the analyze_winguru.py script to be much more robust when handling
+   data extraction from Windguru. The key improvements include:
+
+  1. Better Data Extraction:
+    - Breaking down the forecast data extraction into smaller chunks
+    - Adding multiple fallback methods if primary extraction fails
+    - Using incremental approaches that gradually simplify if more complex extractions
+  fail
+  2. Enhanced Error Handling:
+    - Adding try/except blocks around key functionality
+    - Providing fallback values for when extraction fails
+    - Ensuring the script continues even when certain steps fail
+  3. Improved Map Analysis:
+    - More robust navigation to the map view
+    - Better timepoint navigation with verification
+    - Capturing screenshots for debugging
+    - Multiple fallback strategies for extracting map data
+  4. Simplified Prompts:
+    - More straightforward instructions to the agent
+    - Breaking complex extraction into simpler steps
+    - Adding more specific guidance about what to look for
+
+  These changes should significantly improve the script's ability to handle the
+  extraction issues we saw in the session logs. The script now has multiple layers of
+  fallbacks to ensure it can continue even when certain data extraction steps fail.I've successfully updated the analyze_winguru.py script to properly navigate to the
+  map view by:
+
+  1. First clicking on "maps" in the navigation menu
+  2. Then clicking on "spots" in the dropdown menu
+  3. Finally navigating to the same spot that was being analyzed in the forecast view
+
+  The changes include:
+
+  1. Added the ability to pass spot information from the main forecast analysis to the
+  map analysis function
+  2. Implemented multiple fallback strategies if any navigation step fails
+  3. Added verification steps to ensure successful navigation
+  4. Made navigation more robust by trying alternative approaches if initial attempts
+  fail
+
+  The script now maintains continuity between the forecast analysis and map analysis by
+  explicitly looking for the same spot on the map. This should provide a more
+  comprehensive and consistent analysis of both temporal forecast data and geographical
+  map data for the specified location.

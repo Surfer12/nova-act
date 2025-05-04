@@ -209,11 +209,27 @@ def analyze_forecast(nova: NovaAct) -> ForecastAnalysis:
             }
         )
         
-        if not result.matches_schema or len(result.parsed_response) != len(dates):
-            logger.error(f"Failed to extract wind speeds: {result.parsed_response}")
+        if not result.matches_schema:
+            logger.error(f"Failed to extract wind speeds (schema mismatch): {result.parsed_response}")
             raise ValueError("Could not extract wind speed data points")
-        
+            
         wind_speeds = result.parsed_response
+        
+        # Handle mismatch between number of dates and wind speeds
+        if len(wind_speeds) != len(dates):
+            logger.warning(f"Mismatch between dates ({len(dates)}) and wind speeds ({len(wind_speeds)})")
+            
+            # If we have more dates than wind speeds, truncate dates to match
+            if len(dates) > len(wind_speeds):
+                logger.warning(f"Truncating dates list to match wind speeds length")
+                dates = dates[:len(wind_speeds)]
+            
+            # If we have more wind speeds than dates, truncate wind speeds to match
+            elif len(wind_speeds) > len(dates):
+                logger.warning(f"Truncating wind speeds list to match dates length")
+                wind_speeds = wind_speeds[:len(dates)]
+        
+        # wind_speeds is already set above
         
         # Extract wind gusts
         result = nova.act(
@@ -224,13 +240,33 @@ def analyze_forecast(nova: NovaAct) -> ForecastAnalysis:
             }
         )
         
-        if not result.matches_schema or len(result.parsed_response) != len(dates):
-            logger.error(f"Failed to extract wind gusts: {result.parsed_response}")
+        if not result.matches_schema:
+            logger.error(f"Failed to extract wind gusts (schema mismatch): {result.parsed_response}")
             # Use the wind speeds as fallback for gusts (adding 20%)
             wind_gusts = [round(ws * 1.2, 1) for ws in wind_speeds]
             logger.info("Using calculated wind gusts as fallback")
         else:
             wind_gusts = result.parsed_response
+            
+            # Handle length mismatch between dates and wind gusts
+            if len(wind_gusts) != len(dates):
+                logger.warning(f"Mismatch between dates ({len(dates)}) and wind gusts ({len(wind_gusts)})")
+                
+                if len(wind_gusts) < len(dates):
+                    # If we have fewer gusts than dates, extend the gusts list with calculated values
+                    missing_count = len(dates) - len(wind_gusts)
+                    logger.warning(f"Extending wind gusts list with {missing_count} calculated values")
+                    
+                    # Use existing wind speeds to calculate missing gust values
+                    for i in range(len(wind_gusts), len(dates)):
+                        # Use corresponding wind speed index, or 0 if out of range
+                        ws_idx = min(i, len(wind_speeds) - 1)
+                        ws = wind_speeds[ws_idx] if ws_idx >= 0 else 0
+                        wind_gusts.append(round(ws * 1.2, 1))
+                else:
+                    # If we have more gusts than dates, truncate the gusts list
+                    logger.warning(f"Truncating wind gusts list to match dates length")
+                    wind_gusts = wind_gusts[:len(dates)]
         
         # Extract wind directions
         result = nova.act(
@@ -241,13 +277,27 @@ def analyze_forecast(nova: NovaAct) -> ForecastAnalysis:
             }
         )
         
-        if not result.matches_schema or len(result.parsed_response) != len(dates):
-            logger.error(f"Failed to extract wind directions: {result.parsed_response}")
+        if not result.matches_schema:
+            logger.error(f"Failed to extract wind directions (schema mismatch): {result.parsed_response}")
             # Use a fallback value
             wind_directions = ["Unknown" for _ in dates]
             logger.info("Using placeholder wind directions as fallback")
         else:
             wind_directions = result.parsed_response
+            
+            # Handle length mismatch between dates and wind directions
+            if len(wind_directions) != len(dates):
+                logger.warning(f"Mismatch between dates ({len(dates)}) and wind directions ({len(wind_directions)})")
+                
+                if len(wind_directions) < len(dates):
+                    # If we have fewer directions than dates, extend the directions list
+                    missing_count = len(dates) - len(wind_directions)
+                    logger.warning(f"Extending wind directions list with {missing_count} placeholder values")
+                    wind_directions.extend(["Unknown" for _ in range(missing_count)])
+                else:
+                    # If we have more directions than dates, truncate the directions list
+                    logger.warning(f"Truncating wind directions list to match dates length")
+                    wind_directions = wind_directions[:len(dates)]
         
         # Extract temperatures
         result = nova.act(
@@ -258,13 +308,27 @@ def analyze_forecast(nova: NovaAct) -> ForecastAnalysis:
             }
         )
         
-        if not result.matches_schema or len(result.parsed_response) != len(dates):
-            logger.error(f"Failed to extract temperatures: {result.parsed_response}")
+        if not result.matches_schema:
+            logger.error(f"Failed to extract temperatures (schema mismatch): {result.parsed_response}")
             # Use a fallback value
             temperatures = [20.0 for _ in dates]  # Default temperature
             logger.info("Using default temperatures as fallback")
         else:
             temperatures = result.parsed_response
+            
+            # Handle length mismatch between dates and temperatures
+            if len(temperatures) != len(dates):
+                logger.warning(f"Mismatch between dates ({len(dates)}) and temperatures ({len(temperatures)})")
+                
+                if len(temperatures) < len(dates):
+                    # If we have fewer temperatures than dates, extend the temperatures list
+                    missing_count = len(dates) - len(temperatures)
+                    logger.warning(f"Extending temperatures list with {missing_count} default values")
+                    temperatures.extend([20.0 for _ in range(missing_count)])
+                else:
+                    # If we have more temperatures than dates, truncate the temperatures list
+                    logger.warning(f"Truncating temperatures list to match dates length")
+                    temperatures = temperatures[:len(dates)]
         
         # Combine all data into data points
         data_points = []
@@ -365,56 +429,187 @@ def analyze_map_timepoint(nova: NovaAct, timepoint_index: int) -> MapTimepoint:
     """Analyze a single map timepoint on windguru"""
     logger.info(f"Analyzing map timepoint {timepoint_index}")
     
-    # If there's a timepoint selector, navigate to the specified timepoint
+    # If there's a timepoint selector, navigate to the specified timepoint with better error handling
     if timepoint_index > 0:
-        nova.act(f"Navigate to timepoint/frame {timepoint_index} on the forecast map")
+        try:
+            # Check if there's a time control visible first
+            result = nova.act(
+                "Can you see any time controls, timeline controls, or date/time selectors for the map? Respond with yes or no.",
+                schema={"type": "boolean"}
+            )
+            
+            if result.matches_schema and result.parsed_response:
+                # Try to navigate to the timepoint
+                logger.info(f"Attempting to navigate to timepoint {timepoint_index}")
+                
+                # First try using a more specific action targeting timepoint controls
+                try:
+                    nova.act(f"Look for time controls or a timeline slider, and navigate to timepoint or frame {timepoint_index}")
+                except Exception as e:
+                    logger.warning(f"First navigation attempt failed: {str(e)}")
+                    # Fallback to trying a more general instruction
+                    nova.act(f"Navigate to the next time frame or forecast period shown on the map")
+            else:
+                logger.warning("No time controls visible, cannot navigate to different timepoints")
+        except Exception as e:
+            logger.error(f"Error navigating to timepoint {timepoint_index}: {str(e)}")
     
-    # Extract timestamp
-    result = nova.act(
-        "Identify and extract the date and time displayed for this map",
-        schema={"type": "string"}
-    )
-    timestamp = result.parsed_response if result.matches_schema else f"Timepoint {timepoint_index}"
+    # Extract timestamp with simpler approach
+    try:
+        result = nova.act(
+            "What date and time is shown for the current map view? Look for date/time indicators on the map interface.",
+            schema={"type": "string"}
+        )
+        timestamp = result.parsed_response if result.matches_schema else f"Timepoint {timepoint_index}"
+    except Exception as e:
+        logger.error(f"Error extracting timestamp: {str(e)}")
+        timestamp = f"Timepoint {timepoint_index}"
     
-    # Extract pressure systems
-    result = nova.act(
-        "Identify all high and low pressure systems visible on the wind map. For each, extract the type (high/low), "  
-        "center location, pressure value if shown, and movement direction if indicated.",
-        schema={
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "type": {"type": "string"},
-                    "center_location": {"type": "string"},
-                    "pressure_value": {"type": "number", "nullable": True},
-                    "movement_direction": {"type": "string", "nullable": True}
-                },
-                "required": ["type", "center_location"]
+    # Extract pressure systems with more specific guidance
+    try:
+        result = nova.act(
+            "Look for high and low pressure systems on the map. These are often marked with 'H' and 'L' symbols. "
+            "For each system you can identify, provide the type (high/low), approximate location, "
+            "and any other details visible such as pressure values.",
+            schema={
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "type": {"type": "string"},
+                        "center_location": {"type": "string"},
+                        "pressure_value": {"type": "number", "nullable": True},
+                        "movement_direction": {"type": "string", "nullable": True}
+                    },
+                    "required": ["type", "center_location"]
+                }
             }
-        }
-    )
-    pressure_systems = result.parsed_response if result.matches_schema else []
+        )
+        
+        if not result.matches_schema:
+            # Try a simpler prompt if the first one fails
+            result = nova.act(
+                "Are there any high or low pressure systems visible on this map? If yes, describe their location.",
+                schema={
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {"type": "string"},
+                            "center_location": {"type": "string"}
+                        },
+                        "required": ["type", "center_location"]
+                    }
+                }
+            )
+        
+        pressure_systems = result.parsed_response if result.matches_schema else []
+        
+        # If still empty, try once more with an even simpler approach
+        if len(pressure_systems) == 0:
+            try:
+                result = nova.act(
+                    "Describe any weather systems you can see on the map",
+                    schema={"type": "string"}
+                )
+                
+                if result.matches_schema:
+                    # Create a generic entry from the description
+                    pressure_systems = [{
+                        "type": "system",
+                        "center_location": result.parsed_response[:50]  # Truncate if very long
+                    }]
+            except Exception:
+                # Silently continue if this fails
+                pass
+    except Exception as e:
+        logger.error(f"Error extracting pressure systems: {str(e)}")
+        pressure_systems = []
     
-    # Extract wind patterns
-    result = nova.act(
-        "Identify major wind patterns visible on the map. For each, describe the region affected, "  
-        "wind direction, and speed range.",
-        schema={
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "region": {"type": "string"},
-                    "direction": {"type": "string"},
-                    "speed_range": {"type": "string"},
-                    "gust_potential": {"type": "string", "nullable": True}
-                },
-                "required": ["region", "direction", "speed_range"]
+    # Extract wind patterns with more specific guidance and fallbacks
+    try:
+        result = nova.act(
+            "Look at the wind patterns shown on the map. These might be indicated by colors, arrows, or flow lines. "
+            "Identify 1-3 major wind patterns and for each, describe: "
+            "1) The region affected (e.g., 'Pacific Northwest Coast') "
+            "2) The wind direction (e.g., 'from the southwest') "
+            "3) The approximate wind speeds or intensity",
+            schema={
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "region": {"type": "string"},
+                        "direction": {"type": "string"},
+                        "speed_range": {"type": "string"},
+                        "gust_potential": {"type": "string", "nullable": True}
+                    },
+                    "required": ["region", "direction", "speed_range"]
+                }
             }
-        }
-    )
-    wind_patterns = result.parsed_response if result.matches_schema else []
+        )
+        
+        if not result.matches_schema:
+            # Try a simpler approach
+            result = nova.act(
+                "Describe the main wind patterns shown on this map",
+                schema={
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            )
+            
+            if result.matches_schema:
+                # Convert the string descriptions to the required format
+                wind_patterns = []
+                for description in result.parsed_response:
+                    # Create a simple entry for each description
+                    wind_patterns.append({
+                        "region": "Map area",
+                        "direction": description[:30],  # Use part of description
+                        "speed_range": "Unknown"
+                    })
+            else:
+                wind_patterns = []
+        else:
+            wind_patterns = result.parsed_response
+        
+        # If we still have no patterns, create at least one default pattern
+        if len(wind_patterns) == 0:
+            # Create a general observation
+            try:
+                result = nova.act(
+                    "What is the general wind condition shown on this map?",
+                    schema={"type": "string"}
+                )
+                
+                if result.matches_schema:
+                    wind_patterns = [{
+                        "region": "Entire map area",
+                        "direction": "Various",
+                        "speed_range": result.parsed_response[:30]  # Use the general description
+                    }]
+                else:
+                    # Default fallback if nothing else works
+                    wind_patterns = [{
+                        "region": "Map area",
+                        "direction": "Unknown",
+                        "speed_range": "Unknown"
+                    }]
+            except Exception:
+                # Default fallback
+                wind_patterns = [{
+                    "region": "Map area",
+                    "direction": "Unknown",
+                    "speed_range": "Unknown"
+                }]
+    except Exception as e:
+        logger.error(f"Error extracting wind patterns: {str(e)}")
+        wind_patterns = [{
+            "region": "Map area",
+            "direction": "Error analyzing",
+            "speed_range": "Unknown"
+        }]
     
     logger.info(f"Timepoint analysis complete: found {len(pressure_systems)} pressure systems, "
                f"{len(wind_patterns)} wind patterns")
@@ -503,7 +698,7 @@ def analyze_system_tracks(map_sequence: MapSequence) -> List[WindSystemTrack]:
     return system_tracks
 
 
-def analyze_wind_map(nova: NovaAct, days: int, save_screenshots: bool = False) -> MapAnalysis:
+def analyze_wind_map(nova: NovaAct, days: int, save_screenshots: bool = False, spot_info: Optional[Dict[str, str]] = None) -> MapAnalysis:
     """Analyze the wind map from windguru"""
     logger.info(f"Starting wind map analysis for the next {days} days")
     
@@ -514,31 +709,82 @@ def analyze_wind_map(nova: NovaAct, days: int, save_screenshots: bool = False) -
         save_dir.mkdir(exist_ok=True)
         logger.info(f"Screenshots will be saved to {save_dir}")
     
-    # Navigate to the map view with explicit steps and verification
+    # Navigate to the map view with explicit steps for the specific navigation path
     try:
-        # Try first approach - look for a specific map link
-        logger.info("Attempting to navigate to wind map view")
-        nova.act("Look for and click on a link or button that would show the wind map or weather map view")
-        
-        # Verify we're on a map view
+        # Step 1: Click on "maps" in the navigation menu
+        logger.info("Navigating to maps section")
         result = nova.act(
-            "Verify if you are now on a page showing a wind or weather map. Respond with yes or no.",
+            "Look for and click on the 'maps' link or button in the main navigation menu",
             schema={"type": "boolean"}
         )
         
         if not result.matches_schema or not result.parsed_response:
-            logger.warning("First navigation attempt failed, trying alternative approach")
-            # Try second approach - direct navigation if URL pattern is known
-            nova.act("Navigate to the wind map tab or section that shows a geographical wind forecast")
-            
-            # Verify again
-            result = nova.act(
-                "Verify if you can now see a wind or weather map. Respond with yes or no.",
-                schema={"type": "boolean"}
-            )
-            
-            if not result.matches_schema or not result.parsed_response:
-                logger.warning("Both navigation attempts failed, proceeding with current view")
+            logger.warning("Failed to find 'maps' link, trying alternative selector")
+            nova.act("Click on any menu item or link that would take you to maps or geographical views")
+        
+        # Step 2: Click on "spots" in the dropdown menu
+        logger.info("Navigating to spots map section")
+        result = nova.act(
+            "Look for and click on the 'spots' option in the maps dropdown menu",
+            schema={"type": "boolean"}
+        )
+        
+        if not result.matches_schema or not result.parsed_response:
+            logger.warning("Failed to find 'spots' link, trying alternative approach")
+            nova.act("Look for any map view that shows spot locations or wind forecasts for specific spots")
+        
+        # Step 3: Navigate to the same spot we were viewing in the forecast
+        logger.info("Navigating to the specific spot on the map")
+        try:
+            # Use spot_info if available
+            if spot_info and 'spot_name' in spot_info and spot_info['spot_name']:
+                spot_name = spot_info['spot_name']
+                spot_id = spot_info.get('spot_id', '')
+                logger.info(f"Using provided spot info: {spot_name} (ID: {spot_id})")
+                
+                # Use this information to navigate
+                nova.act(
+                    f"Look for and click on the spot '{spot_name}' (ID: {spot_id}) on the map, "
+                    f"or search for this spot if a search option is available"
+                )
+            else:
+                # Try to get the spot name and ID from the current page if not already known
+                spot_name_result = nova.act(
+                    "What is the name of the spot/location we're currently viewing or analyzing?",
+                    schema={"type": "string"}
+                )
+                
+                if spot_name_result.matches_schema:
+                    spot_name = spot_name_result.parsed_response
+                    logger.info(f"Found spot name: {spot_name}")
+                    
+                    # Use this information to navigate
+                    nova.act(
+                        f"Look for and click on the spot '{spot_name}' on the map, "
+                        f"or search for this spot if a search option is available"
+                    )
+                else:
+                    # If we can't get the spot name, just use a generic approach
+                    logger.warning("Could not determine spot name, using generic navigation")
+                    nova.act(
+                        "Look for and click on the spot we were previously analyzing on the map, "
+                        "or any main spot of interest"
+                    )
+        except Exception as e:
+            logger.error(f"Error identifying spot for map navigation: {str(e)}")
+            # Generic fallback
+            nova.act("Look for and select any prominent spot on the map")
+        
+        # Final verification
+        result = nova.act(
+            "Verify if you are now on a page showing a wind or weather map for the spot we're analyzing. Respond with yes or no.",
+            schema={"type": "boolean"}
+        )
+        
+        if not result.matches_schema or not result.parsed_response:
+            logger.warning("Navigation to specific spot map failed, trying general map view")
+            # Fallback to any wind map view
+            nova.act("Navigate to any available wind map or weather map showing wind patterns")
     except Exception as e:
         logger.error(f"Error navigating to map view: {str(e)}")
         logger.warning("Will attempt to continue with current view")
@@ -801,7 +1047,13 @@ def main(spot_id: str = "1207462", analyze_map: bool = False, headless: bool = F
             if analyze_map:
                 logger.info("Starting additional wind map analysis")
                 try:
-                    map_analysis = analyze_wind_map(nova, days=3, save_screenshots=save_screenshots)
+                    # Pass the spot info to the map analysis function for continuity
+                    spot_info_dict = {
+                        "spot_name": analysis.raw_data.spot_name,
+                        "spot_id": analysis.raw_data.spot_id,
+                        "forecast_generated": analysis.raw_data.forecast_generated
+                    }
+                    map_analysis = analyze_wind_map(nova, days=3, save_screenshots=save_screenshots, spot_info=spot_info_dict)
                     
                     # Display the map analysis results
                     print("\n===== WIND MAP ANALYSIS =====\n")
