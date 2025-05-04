@@ -196,7 +196,7 @@ def main(spot_id: str = "1207462", headless: bool = False) -> None:
     
     # Initialize NovaAct with the specified spot ID
     with NovaAct(
-        starting_page=f"https://www.windguru.cz/{spot_id}",
+        starting_page=f"https://www.windguru.cz/1207462}",
         headless=headless
     ) as nova:
         logger.info("NovaAct session initialized")
