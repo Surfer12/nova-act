@@ -5,3 +5,5 @@
 # magic environments
 .magic
 nova-act-result.md
+
+**/.claude/settings.local.json
