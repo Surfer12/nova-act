@@ -1,0 +1,3 @@
+# nova-act windguru nova-premiere model-config
+Plan to use Nova Premiere for Windguru analysis: 1. Attempt to set endpoint_name='nova-premiere' in NovaAct initialization or act calls to access Nova Premiere model. 2. Adjust model parameters like model_temperature and model_top_k in act calls for better data extraction if direct model selection fails. 3. Retain error handling patches in analyze_winguru.py to handle ActModelError. 4. Test script with updated settings and review logs for model usage and extraction success.
+
