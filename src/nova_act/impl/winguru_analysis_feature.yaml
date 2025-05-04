@@ -1,0 +1,20 @@
+winguru_analysis_feature:
+  purpose: "Extend NovaAct to analyze wind forecast data from winguru.cz using a fractal framework"
+  components:
+    - module: "winguru_analyzer.py"
+      role: "Core analysis logic"
+      functionalities:
+        - "Web content extraction using Playwright"
+        - "Multi-scale pattern analysis (micro, meso, macro)"
+        - "Meta-analysis generation across scales"
+    - integration: "nova_act.py"
+      modification: "Added analyze_winguru() method to NovaAct class"
+      initialization: "Added WinGuruAnalyzer instance in constructor"
+  therapeutic_tags:
+    - grounding: "Focus on real-time web data as present awareness"
+    - integration: "Combining raw data with multi-scale analysis for meaning construction"
+    - meta_awareness: "Pattern recognition across different conceptual scales"
+  future_refinement:
+    - "Enhance DOM scraping logic for specific wind forecast elements"
+    - "Deepen pattern recognition algorithms based on domain knowledge"
+    

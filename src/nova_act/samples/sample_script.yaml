@@ -1,0 +1,16 @@
+sample_script:
+  name: "analyze_winguru.py"
+  location: "src/nova_act/samples/"
+  purpose: "Demonstrate usage of NovaAct with WinGuruAnalyzer for wind forecast analysis"
+  execution:
+    command: "python src/nova_act/samples/analyze_winguru.py"
+    steps:
+      - "Initialize NovaAct client with winguru.cz as starting page"
+      - "Start browser client"
+      - "Analyze winguru.cz content using fractal framework"
+      - "Display multi-scale analysis results"
+      - "Stop client for cleanup"
+  therapeutic_tags:
+    - grounding: "Focus on real-world wind forecast data"
+    - integration: "Synthesize data across multiple scales for comprehensive understanding"
+    - meta_awareness: "Recognize patterns at different levels of abstraction"
