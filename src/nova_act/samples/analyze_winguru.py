@@ -28,7 +28,7 @@ def main():
         
         # Analyze winguru.cz content with increased timeout
         print("Analyzing wind forecast data from winguru.cz...")
-        result = nova.analyze_winguru(timeout=60000)  # Increase timeout to 60 seconds
+        result = nova.analyze_winguru(timeout=120000)  # Increase timeout to 120 seconds
         
         # Display the analysis results
         print("\nAnalysis Results:")
