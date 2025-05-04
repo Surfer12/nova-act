@@ -1,0 +1,105 @@
+# Thresholds Schema
+# This schema defines thresholds for wind analysis
+
+# Wind speed categories (in knots)
+wind_speed:
+  calm: 
+    min: 0
+    max: 3
+    description: "Calm conditions, smoke rises vertically"
+  
+  light: 
+    min: 3
+    max: 10
+    description: "Light breeze, leaves rustle, wind felt on face"
+  
+  moderate: 
+    min: 10
+    max: 20
+    description: "Moderate breeze, raises dust, small branches move"
+  
+  strong: 
+    min: 20
+    max: 30
+    description: "Strong breeze, large branches in motion, whistling heard"
+  
+  gale: 
+    min: 30
+    max: 40
+    description: "Near gale to gale, whole trees in motion, resistance felt when walking"
+  
+  storm: 
+    min: 40
+    max: 55
+    description: "Storm conditions, twigs break off trees, walking impeded"
+  
+  hurricane: 
+    min: 55
+    max: 999
+    description: "Hurricane force, widespread damage"
+
+# Wind bands for specific activities
+activity_bands:
+  kiteboarding:
+    beginner:
+      min: 10
+      max: 15
+      description: "Good for beginners, steady wind"
+    intermediate:
+      min: 15
+      max: 25
+      description: "Good for intermediate riders"
+    advanced:
+      min: 25
+      max: 35
+      description: "Suitable for advanced riders only"
+  
+  sailing:
+    light_wind:
+      min: 5
+      max: 10
+      description: "Light wind sailing"
+    moderate_wind:
+      min: 10
+      max: 20
+      description: "Moderate wind sailing"
+    heavy_wind:
+      min: 20
+      max: 30
+      description: "Heavy wind sailing"
+
+# Gust factor thresholds
+gust_factor:
+  steady: 
+    min: 1.0
+    max: 1.2
+    description: "Steady conditions, minimal gusting"
+  
+  moderate: 
+    min: 1.2
+    max: 1.5
+    description: "Moderate gusting"
+  
+  gusty: 
+    min: 1.5
+    max: 2.0
+    description: "Gusty conditions"
+  
+  very_gusty: 
+    min: 2.0
+    max: 999
+    description: "Very gusty, unstable conditions"
+
+# Alert thresholds
+alerts:
+  high_wind:
+    threshold: 25
+    description: "High wind alert"
+  
+  wind_shift:
+    threshold: 45  # degrees
+    description: "Significant wind direction shift"
+  
+  rapid_intensification:
+    threshold: 10  # knots per hour
+    description: "Rapid wind intensification"

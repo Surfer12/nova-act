@@ -1,0 +1,97 @@
+# Base Profile
+# This is the base profile for wind analysis with default settings
+
+name: "base"
+description: "Default wind analysis profile"
+
+# Time windows for different analysis scales
+time_windows:
+  micro:
+    hours: 24
+  meso:
+    hours: 72
+  macro:
+    hours: 168
+
+# Analysis parameters
+analysis:
+  min_data_points: 3
+  
+  trend_detection:
+    change_threshold: 20
+    min_absolute_change: 2.0
+  
+  gust_analysis:
+    gusty_threshold: 1.5
+    significant_gust: 5.0
+  
+  variability:
+    high_variability: 10.0
+    low_variability: 5.0
+
+# Wind speed thresholds (in knots)
+wind_speed:
+  calm: 
+    min: 0
+    max: 3
+  
+  light: 
+    min: 3
+    max: 10
+  
+  moderate: 
+    min: 10
+    max: 20
+  
+  strong: 
+    min: 20
+    max: 30
+  
+  gale: 
+    min: 30
+    max: 40
+  
+  storm: 
+    min: 40
+    max: 55
+  
+  hurricane: 
+    min: 55
+    max: 999
+
+# Gust factor thresholds
+gust_factor:
+  steady: 
+    min: 1.0
+    max: 1.2
+  
+  moderate: 
+    min: 1.2
+    max: 1.5
+  
+  gusty: 
+    min: 1.5
+    max: 2.0
+  
+  very_gusty: 
+    min: 2.0
+    max: 999
+
+# Visualization parameters
+visualization:
+  figure_size:
+    width: 10
+    height: 6
+  
+  colors:
+    wind_speed: "viridis"
+    wind_direction: "hsv"
+    temperature: "plasma"
+  
+  dpi: 100
+  time_format: "%m-%d %H:%M"
+  
+  default_plots:
+    - "wind_speed_time_series"
+    - "wind_direction_rose"
+    - "gust_factor_analysis"

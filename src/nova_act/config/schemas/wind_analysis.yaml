@@ -1,0 +1,65 @@
+# Wind Analysis Schema
+# This schema defines the parameters for wind analysis
+
+# Time windows for different analysis scales
+time_windows:
+  micro:
+    description: "Short-term patterns (next 24h)"
+    hours: 24
+  meso:
+    description: "Medium-term patterns (24-72h)"
+    hours: 72
+  macro:
+    description: "Long-term patterns (3+ days)"
+    hours: 168  # 7 days
+
+# Analysis parameters
+analysis:
+  # Minimum number of data points required for analysis
+  min_data_points: 3
+  
+  # Trend detection parameters
+  trend_detection:
+    # Percentage change required to detect increasing/decreasing trend
+    change_threshold: 20  # 20% change
+    # Minimum absolute change in wind speed to detect a trend (knots)
+    min_absolute_change: 2.0
+  
+  # Gust analysis parameters
+  gust_analysis:
+    # Ratio of gust to sustained wind that indicates gusty conditions
+    gusty_threshold: 1.5
+    # Minimum gust speed to be considered significant (knots)
+    significant_gust: 5.0
+  
+  # Variability analysis
+  variability:
+    # Wind speed range that indicates high variability (knots)
+    high_variability: 10.0
+    # Wind speed range that indicates low variability (knots)
+    low_variability: 5.0
+
+# Visualization parameters
+visualization:
+  # Default chart size
+  figure_size:
+    width: 10
+    height: 6
+  
+  # Color schemes
+  colors:
+    wind_speed: "viridis"
+    wind_direction: "hsv"
+    temperature: "plasma"
+  
+  # Default DPI for saved images
+  dpi: 100
+  
+  # Time format for x-axis labels
+  time_format: "%m-%d %H:%M"
+  
+  # Default plots to include in reports
+  default_plots:
+    - "wind_speed_time_series"
+    - "wind_direction_rose"
+    - "gust_factor_analysis"

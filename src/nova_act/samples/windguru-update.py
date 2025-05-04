@@ -290,13 +290,41 @@ def analyze_forecast(nova: NovaAct) -> ForecastAnalysis:
                     wind_gusts = wind_gusts[:len(dates)]
         
         # Extract wind directions
-        result = nova.act(
-            "Extract the wind directions (e.g., NE, SW) for each timepoint in the forecast table",
-            schema={
-                "type": "array",
-                "items": {"type": "string"}
-            }
-        )
+try:
+    result = nova.act(
+        "Extract the wind directions (e.g., NE, SW) for each timepoint in the forecast table",
+        schema={
+            "type": "array",
+            "items": {"type": "string"}
+        }
+    )
+    
+    if not result.matches_schema:
+        logger.error(f"Failed to extract wind directions (schema mismatch): {result.parsed_response}")
+        # Use a fallback value
+        wind_directions = ["Unknown" for _ in dates]
+        logger.info("Using placeholder wind directions as fallback")
+    else:
+        wind_directions = result.parsed_response
+        
+        # Handle length mismatch between dates and wind directions
+        if len(wind_directions) != len(dates):
+            logger.warning(f"Mismatch between dates ({len(dates)}) and wind directions ({len(wind_directions)})")
+            
+            if len(wind_directions) < len(dates):
+                # If we have fewer directions than dates, extend the directions list
+                missing_count = len(dates) - len(wind_directions)
+                logger.warning(f"Extending wind directions list with {missing_count} placeholder values")
+                wind_directions.extend(["Unknown" for _ in range(missing_count)])
+            else:
+                # If we have more directions than dates, truncate the directions list
+                logger.warning(f"Truncating wind directions list to match dates length")
+                wind_directions = wind_directions[:len(dates)]
+except Exception as e:
+    logger.error(f"Error extracting wind directions: {str(e)}")
+    wind_directions = ["Unknown" for _ in dates]  # Default wind direction
+    logger.warning("Using default wind directions due to model error")
+
         
         if not result.matches_schema:
             logger.error(f"Failed to extract wind directions (schema mismatch): {result.parsed_response}")

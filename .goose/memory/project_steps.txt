@@ -1,3 +1,6 @@
 # nova-act windguru error-handling
 Next steps for analyze_winguru.py: 1. Apply patches to handle ActModelError during wind speed extraction by using try-except blocks and default values. 2. Rerun the script to check if it proceeds past the wind speed extraction step. 3. Review logs to confirm successful data extraction or use of default values.
 
+# windguru error_handling nova_act
+Next steps for analyze_winguru.py: 1. Manually update the script with provided code snippet to add try-except block for handling ActModelError during wind direction extraction. 2. Rerun the script using the command `python src/nova_act/samples/windguru-update.py` to check if it proceeds past the wind direction extraction step. 3. Review logs to confirm successful data extraction or use of default values for wind directions.
+

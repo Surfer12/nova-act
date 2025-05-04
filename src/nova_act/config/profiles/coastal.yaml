@@ -1,0 +1,80 @@
+# Coastal Profile
+# This profile is optimized for coastal environments
+
+name: "coastal"
+description: "Profile optimized for coastal environments"
+extends: "base"  # Inherits from base profile
+
+# Analysis parameters - adjusted for coastal conditions
+analysis:
+  # Coastal areas often have more reliable forecasts with more data points
+  min_data_points: 3
+  
+  trend_detection:
+    # Coastal winds can change more rapidly due to sea breezes
+    change_threshold: 15  # More sensitive than base
+    min_absolute_change: 1.5  # More sensitive than base
+  
+  gust_analysis:
+    # Coastal areas often have steadier winds
+    gusty_threshold: 1.4  # Slightly lower than base
+    significant_gust: 4.0  # Slightly lower than base
+  
+  variability:
+    # Coastal winds can be more variable due to land/sea interactions
+    high_variability: 8.0  # Lower than base
+    low_variability: 4.0  # Lower than base
+
+# Wind speed thresholds adjusted for coastal conditions (in knots)
+wind_speed:
+  # Coastal environments often have steadier winds
+  light: 
+    min: 3
+    max: 12  # Higher than base
+  
+  moderate: 
+    min: 12
+    max: 22  # Higher than base
+  
+  strong: 
+    min: 22
+    max: 32  # Higher than base
+
+# Coastal-specific activity bands
+activity_bands:
+  kiteboarding:
+    beginner:
+      min: 12
+      max: 18
+      description: "Good for beginners in coastal conditions"
+    intermediate:
+      min: 18
+      max: 25
+      description: "Good for intermediate riders in coastal conditions"
+    advanced:
+      min: 25
+      max: 35
+      description: "Suitable for advanced riders only in coastal conditions"
+  
+  sailing:
+    light_wind:
+      min: 6
+      max: 12
+      description: "Light wind sailing in coastal conditions"
+    moderate_wind:
+      min: 12
+      max: 22
+      description: "Moderate wind sailing in coastal conditions"
+    heavy_wind:
+      min: 22
+      max: 32
+      description: "Heavy wind sailing in coastal conditions"
+
+# Visualization parameters
+visualization:
+  # Coastal visualizations often benefit from showing tidal information
+  default_plots:
+    - "wind_speed_time_series"
+    - "wind_direction_rose"
+    - "gust_factor_analysis"
+    - "diurnal_pattern"  # Added for sea breeze analysis

@@ -47,3 +47,8 @@ dev = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.dependencies]
 pip = ">=25.1.1,<26"
+scikit-learn = ">=1.6.1,<2"
+numpy = ">=2.2.5,<3"
+pandas = ">=2.2.3,<3"
+anthropic = ">=0.50.0,<0.51"
+openai = ">=1.77.0,<2"
