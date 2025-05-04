@@ -1,4 +1,3 @@
-
 # Copyright 2025 Amazon Inc
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,15 +20,15 @@ using a fractal, multi-layered analysis framework.
 from nova_act import NovaAct 
 def main():
     # Initialize NovaAct with a starting page (can be overridden later)
-    nova = NovaAct(starting_page="https://www.windguru.cz")
+    nova = NovaAct(starting_page="https://www.windguru.cz/1207462")
     
     try:
         # Start the client
         nova.start()
         
-        # Analyze winguru.cz content
+        # Analyze winguru.cz content with increased timeout
         print("Analyzing wind forecast data from winguru.cz...")
-        result = nova.analyze_winguru()
+        result = nova.analyze_winguru(timeout=60000)  # Increase timeout to 60 seconds
         
         # Display the analysis results
         print("\nAnalysis Results:")
@@ -44,7 +43,17 @@ def main():
         for pattern in result.macro_patterns:
             print(f"- {pattern}")
         print(f"\nMeta Analysis: {result.meta_analysis}")
-    
+
+    except Exception as e:
+        print(f"An error occurred during analysis: {str(e)}")
+        # Attempt to provide some diagnostic information
+        if 'Timeout' in str(e):
+            print("Timeout error: The page took too long to load. Consider increasing the timeout or checking your internet connection.")
+        elif 'Network' in str(e):
+            print("Network error: There might be an issue with your internet connection or the website might be down.")
+        else:
+            print("Unexpected error: Please check the logs for more details.")
+
     finally:
         # Ensure the client is stopped
         nova.stop()
