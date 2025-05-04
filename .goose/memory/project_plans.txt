@@ -4,3 +4,9 @@ Plan to use Nova Premiere for Windguru analysis: 1. Attempt to set endpoint_name
 # windguru AI enhancements forecasting
 Advanced windguru enhancement plan: 1. Add AI integration with RandomForestRegressor to predict wind shifts 24-48 hours ahead. 2. Implement Fourier analysis with numpy.fft to detect cyclical wind patterns and tidal influences. 3. Add pandas time-series decomposition to separate seasonal trends from fluctuations. 4. Enhance web automation with retry logic and exponential backoff. 5. Add statistical validation with bootstrapping for confidence intervals. All code snippets provided for manual integration into windguru-update.py.
 
+# windguru AI enhancements forecasting
+Advanced windguru enhancement plan: 1. Add AI integration with RandomForestRegressor to predict wind shifts 24-48 hours ahead. 2. Implement Fourier analysis with numpy.fft to detect cyclical wind patterns and tidal influences. 3. Add pandas time-series decomposition to separate seasonal trends from fluctuations. 4. Enhance web automation with retry logic and exponential backoff. 5. Add statistical validation with bootstrapping for confidence intervals. All code snippets provided for manual integration into windguru-update.py.
+
+# nova-act windguru nova-premiere model-config
+Plan to use Nova Premiere for Windguru analysis: 1. Attempt to set endpoint_name='nova-premiere' in NovaAct initialization or act calls to access Nova Premiere model. 2. Adjust model parameters like model_temperature and model_top_k in act calls for better data extraction if direct model selection fails. 3. Retain error handling patches in analyze_winguru.py to handle ActModelError. 4. Test script with updated settings and review logs for model usage and extraction success.
+
