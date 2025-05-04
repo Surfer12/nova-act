@@ -19,16 +19,16 @@ using a fractal, multi-layered analysis framework.
 
 from nova_act import NovaAct 
 def main():
-    # Initialize NovaAct with a starting page (can be overridden later)
-    nova = NovaAct(starting_page="https://www.windguru.cz/1207462")
+    # Initialize NovaAct with a starting page and explicitly set browser to Chromium
+    nova = NovaAct(starting_page="https://www.windguru.cz/1207462", chrome_channel="chromium")
     
     try:
         # Start the client
         nova.start()
         
-        # Analyze winguru.cz content with increased timeout
+        # Analyze winguru.cz content
         print("Analyzing wind forecast data from winguru.cz...")
-        result = nova.analyze_winguru(timeout=120000)  # Increase timeout to 120 seconds
+        result = nova.analyze_winguru()  # Remove timeout parameter as it's not supported
         
         # Display the analysis results
         print("\nAnalysis Results:")
